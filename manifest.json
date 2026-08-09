@@ -1,0 +1,32 @@
+{
+  "name": "Caderno — Meu Estudo Pessoal",
+  "short_name": "Caderno",
+  "description": "Estudo pessoal, caderno livre, jóias espirituais, discursos, organização, planner, assembleias, congressos, relatório de campo e revisitas.",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FDF7F4",
+  "theme_color": "#FBE9EF",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "icone-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icone-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icone-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
