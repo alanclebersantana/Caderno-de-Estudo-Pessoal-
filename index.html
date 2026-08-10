@@ -1053,28 +1053,36 @@ function montarNav(){
   el.innerHTML=ABAS.map(([id,nome])=>
     `<button data-a="${id}" onclick="go('${id}')"><span class="dot"></span>${nome}</button>`).join('');
 }
-/* ==================== CARGA ==================== */
-async function carregar(){
-  estudos=await Store.lista(K.estudos);
-  categorias=await Store.lista(K.categorias);
-  joias=await Store.lista(K.joias);
-  projetos=await Store.lista(K.projetos);
-  assembleias=await Store.lista(K.assembleias);
-  congressos=await Store.lista(K.congressos);
-  revisitas=await Store.lista(K.revisitas);
-  paginas=await Store.lista(K.paginas);
-  discursos=await Store.lista(K.discursos);
-  relatorio=await Store.lista(K.relatorio);
-  const q=await Store.objeto(K.quadro);
-  quadro=q&&q.listas?q:{id:'quadro',updatedAt:Date.now(),listas:[
-    {id:uid(),nome:'A fazer',cards:[]},{id:uid(),nome:'Fazendo',cards:[]},{id:uid(),nome:'Feito',cards:[]}]};
-  renderTudo();
+function abrirMenu(){ $('drawer').classList.add('on'); $('drawerBg').classList.add('on'); document.body.style.overflow='hidden'; }
+function fecharMenu(){ $('drawer').classList.remove('on'); $('drawerBg').classList.remove('on');
+  if(!document.querySelector('.sheet-bg.on')) document.body.style.overflow=''; }
+function go(a){
+  ABAS.forEach(([id])=>{ const s=$('v_'+id); if(s) s.style.display=id===a?'':'none'; });
+  document.querySelectorAll('[data-a]').forEach(b=>b.classList.toggle('on',b.dataset.a===a));
+  const nome=(ABAS.find(([id])=>id===a)||['','Caderno'])[1];
+  const t=$('tb_aba'); if(t) t.textContent=nome;
+  fecharMenu();
+  window.scrollTo({top:0,behavior:'smooth'});
+  try{ localStorage.setItem('at_aba',a); }catch(e){}
 }
-function renderTudo(){ renderCategorias(); renderEstudos(); renderJoias(); renderBoard(); renderProjetos();
-  renderEventos('assembleia'); renderEventos('congresso'); renderRevisitas();
-  renderPaginas(); renderDiscursos(); renderRelatorio(); }
-async function guardar(chave,lista){ await Store.set(K[chave],lista); agendarSync(); }
-
+/* ==================== CARGA ==================== */
+function montarNav(){
+  const el=$('navD'); if(!el) return;
+  el.innerHTML=ABAS.map(([id,nome])=>
+    `<button data-a="${id}" onclick="go('${id}')"><span class="dot"></span>${nome}</button>`).join('');
+}
+function abrirMenu(){ $('drawer').classList.add('on'); $('drawerBg').classList.add('on'); document.body.style.overflow='hidden'; }
+function fecharMenu(){ $('drawer').classList.remove('on'); $('drawerBg').classList.remove('on');
+  if(!document.querySelector('.sheet-bg.on')) document.body.style.overflow=''; }
+function go(a){
+  ABAS.forEach(([id])=>{ const s=$('v_'+id); if(s) s.style.display=id===a?'':'none'; });
+  document.querySelectorAll('[data-a]').forEach(b=>b.classList.toggle('on',b.dataset.a===a));
+  const nome=(ABAS.find(([id])=>id===a)||['','Caderno'])[1];
+  const t=$('tb_aba'); if(t) t.textContent=nome;
+  fecharMenu();
+  window.scrollTo({top:0,behavior:'smooth'});
+  try{ localStorage.setItem('at_aba',a); }catch(e){}
+}
 /* ============================================================
    ESTUDO PESSOAL
    ============================================================ */
