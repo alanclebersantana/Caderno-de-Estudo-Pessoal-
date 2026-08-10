@@ -301,7 +301,100 @@ button{cursor:pointer;border:none;background:none;padding:0}
   .col{max-height:calc(100vh - 230px)}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
-</style>
+/* ============ GAVETA v4 ============ */
+ 
+.side{padding:0 16px calc(13px + env(safe-area-inset-bottom))}
+ 
+/* ---- capa ---- */
+.side .capa{
+  margin:0 -16px 12px;
+  padding:22px 16px 18px;
+  background:linear-gradient(155deg,
+    color-mix(in srgb, var(--blush) 55%, var(--paper)) 0%,
+    var(--blush) 70%,
+    color-mix(in srgb, var(--blush-2) 60%, var(--paper)) 100%);
+  border-bottom:1px solid var(--blush-2);
+  display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+}
+.side .capa small{
+  display:block;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+  font-weight:700;color:var(--teal-deep);margin-bottom:2px;
+}
+.side .capa strong{
+  display:block;font-family:var(--script);font-size:29px;line-height:1.05;
+  color:var(--rose-ink);font-weight:700;
+}
+.side .capa .fechar-menu{
+  position:static;flex:0 0 34px;width:34px;height:34px;
+  background:var(--paper);border-color:var(--blush-3);
+}
+html[data-modo="escuro"] .side .capa{
+  background:linear-gradient(155deg,
+    color-mix(in srgb, var(--blush) 70%, var(--paper)) 0%,
+    var(--blush) 100%);
+  border-bottom-color:var(--blush-3);
+}
+ 
+/* ---- navegação: barrinha + ícone ---- */
+.side .nav{gap:1px}
+.side .nav button{
+  position:relative;display:flex;align-items:center;gap:11px;
+  padding:9px 12px 9px 17px;border-radius:0 13px 13px 0;
+  font-size:13.5px;font-weight:600;color:var(--ink-soft);
+  width:100%;text-align:left;
+}
+.side .nav button::before{
+  content:"";position:absolute;left:0;top:6px;bottom:6px;width:3px;
+  border-radius:0 99px 99px 0;background:var(--line);transition:width .15s;
+}
+.side .nav button.g1::before{background:var(--rose)}
+.side .nav button.g2::before{background:var(--teal)}
+.side .nav button.g3::before{background:var(--gold)}
+.side .nav button.g4::before{background:var(--lilac)}
+.side .nav button.on{background:var(--blush);color:var(--rose-ink)}
+.side .nav button.on::before{width:5px}
+ 
+.side .nav button .dot{display:none}
+ 
+.side .nav svg{
+  width:18px;height:18px;flex:0 0 18px;
+  stroke:currentColor;fill:none;stroke-width:1.5;
+  stroke-linecap:round;stroke-linejoin:round;opacity:.62;
+}
+.side .nav button.on svg{opacity:1}
+ 
+/* ---- rodapé em fileira ---- */
+.side .foot{border-top:1px solid var(--line);padding-top:11px;gap:0}
+.side .fileira{display:flex;gap:6px}
+.side .fileira button{
+  flex:1;border:1px solid var(--line);border-radius:14px;
+  padding:9px 3px 7px;text-align:center;
+  font-size:9px;font-weight:700;color:var(--muted);
+}
+.side .fileira button svg{
+  width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.5;
+  stroke-linecap:round;stroke-linejoin:round;
+  display:block;margin:0 auto 3px;opacity:.75;
+}
+.side .fileira button.pri{
+  background:var(--blush);border-color:var(--blush-3);color:var(--rose-ink);
+}
+.side .fileira button.pri svg{opacity:1}
+ 
+.side .status{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  font-size:10px;color:var(--muted);margin-top:9px;
+}
+.side .status .led{width:6px;height:6px;border-radius:50%;background:var(--teal-deep);flex:0 0 6px}
+.side .status .led.off{background:var(--blush-3)}
+.side .status .led.err{background:var(--danger)}
+ 
+.side .credito{
+  text-align:center;font-size:8.5px;letter-spacing:.06em;
+  color:var(--muted);opacity:.42;margin-top:9px;font-weight:600;
+}
+ 
+ </style>
 </head>
 <body>
 <div class="drawer-bg" id="drawerBg" onclick="fecharMenu()"></div>
