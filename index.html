@@ -423,7 +423,41 @@ html[data-modo="escuro"] .side .capa{
   color:var(--muted);opacity:.42;margin-top:9px;font-weight:600;
 }
  
- </style>
+ /* ============ TÍTULOS DE SEÇÃO ============ */
+.section-head{display:block;padding:18px 18px 0}
+.sec-cartao{
+  max-width:980px;margin:0 auto;
+  background:var(--paper);border:1px solid var(--line);border-radius:18px;
+  padding:16px 18px;box-shadow:0 10px 28px -22px rgba(62,74,82,.5);
+  display:flex;align-items:flex-start;gap:14px;
+}
+.sec-cartao .corpo{flex:1;min-width:0}
+.sec-cartao .topo{display:flex;align-items:center;gap:11px}
+.sec-cartao .ico{
+  width:24px;height:24px;flex:0 0 24px;color:var(--rose-deep);opacity:.85;
+  stroke:currentColor;fill:none;stroke-width:1.5;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+.sec-cartao h2{
+  font-family:var(--script);font-size:31px;margin:0;
+  color:var(--rose-ink);font-weight:700;line-height:1;
+}
+.sec-cartao .pill{
+  margin-left:auto;flex:0 0 auto;font-size:10.5px;font-weight:700;
+  color:var(--teal-deep);background:var(--gelo);border:1px solid var(--line);
+  border-radius:999px;padding:4px 10px;white-space:nowrap;
+}
+.sec-cartao .sub{
+  display:block;height:7px;width:150px;max-width:70%;
+  margin:5px 0 0 35px;color:var(--rose);opacity:.5;
+}
+.sec-cartao p{margin:8px 0 0 35px;font-size:12.5px;color:var(--muted);line-height:1.5}
+.sec-cartao .round{align-self:center}
+
+@media(min-width:900px){
+  .section-head{padding-top:32px}
+  .sec-cartao h2{font-size:36px}
+}</style>
 </head>
 <body>
 <div class="drawer-bg" id="drawerBg" onclick="fecharMenu()"></div>
