@@ -1926,5 +1926,60 @@ $('fileImp').addEventListener('change',async ev=>{
   }
 })();
 </script>
+<script>
+(function(){
+  var INICIO_MIN = 30;
+  var INICIO_MAX = function(){ return innerWidth * 0.60; };
+  var DIST       = 80;
+  var DESVIO     = 70;
+  var TEMPO      = 700;
+
+  function bloqueado(el){
+    return !!(el && el.closest &&
+      el.closest('.chips, .board, .col-body, input, textarea, select, .picker'));
+  }
+
+  var x0=null, y0=null, t0=0;
+
+  addEventListener('touchstart', function(e){
+    var t = e.touches[0];
+    var side = document.querySelector('.side');
+    if(side && side.classList.contains('on')){ x0=null; return; }
+    if(bloqueado(e.target)){ x0=null; return; }
+    if(t.clientX >= INICIO_MIN && t.clientX <= INICIO_MAX()){
+      x0=t.clientX; y0=t.clientY; t0=Date.now();
+    } else x0=null;
+  }, {passive:true});
+
+  addEventListener('touchend', function(e){
+    if(x0===null) return;
+    var t=e.changedTouches[0];
+    var dx=t.clientX-x0, dy=Math.abs(t.clientY-y0);
+    if(dx>DIST && dy<DESVIO && dx>dy*1.5 && Date.now()-t0<TEMPO){
+      var b=document.querySelector('.burger');
+      if(b) b.click();
+    }
+    x0=null;
+  }, {passive:true});
+
+  var sx=null, sy=null;
+  addEventListener('touchstart', function(e){
+    var s=document.querySelector('.side');
+    if(s && s.classList.contains('on')){
+      sx=e.touches[0].clientX; sy=e.touches[0].clientY;
+    } else sx=null;
+  }, {passive:true});
+
+  addEventListener('touchend', function(e){
+    if(sx===null) return;
+    var t=e.changedTouches[0];
+    if(t.clientX-sx < -60 && Math.abs(t.clientY-sy) < DESVIO){
+      var bg=document.querySelector('.drawer-bg');
+      if(bg) bg.click();
+    }
+    sx=null;
+  }, {passive:true});
+})();
+</script>
 </body>
 </html>
