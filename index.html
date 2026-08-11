@@ -1292,7 +1292,7 @@ async function fecharEstudo(){ const ok=await salvarEstudo(false); fechar('sheet
 async function excluirEstudo(){
   if(!edEstudo||!confirm('Excluir este estudo?')) return;
   estudos=estudos.filter(e=>e.id!==edEstudo).concat({id:edEstudo,del:true,updatedAt:Date.now()});
-  await Store.set(K.estudos,estudos); estudos=estudos.filter(e=>!e.del);
+  await Store.set(K.estudos,estudos); agendarSync();
   fechar('sheetEstudo'); renderEstudos(); toast('Estudo excluído.');
 }
 
@@ -1986,7 +1986,7 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape') fecharMenu(); });
    NUVEM — Google Sheets pelo Apps Script
    leitura por JSONP, escrita por formulário: não depende de CORS
    ============================================================ */
-const K_URL='at_nuvem_url', K_MARCAS='at_nuvem_marcas';
+const K_URL='at_nuvem_url', K_MARCAS='at_nuvem_marcas', K_FILA='at_nuvem_fila';
 const Nuvem={
   get url(){ try{ return localStorage.getItem(K_URL)||''; }catch(e){ return ''; } },
   set url(u){ try{ localStorage.setItem(K_URL,u||''); }catch(e){} },
@@ -2029,11 +2029,24 @@ const Nuvem={
       headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(pacote)}); }catch(e){}
     await this.enviarForm(pacote);
   },
+  fila(){ try{ return JSON.parse(localStorage.getItem(K_FILA)||'{}'); }catch(e){ return {}; } },
+  porFila(f){ try{ localStorage.setItem(K_FILA,JSON.stringify(f)); }catch(e){} },
   async trocar(tabela,locais){
     const m=this.marcas()[tabela]||{l:0,s:0};
-    const novos=(locais||[]).filter(i=>i&&(i.updatedAt||0)>(m.l||0));
+    const f=this.fila();
+    const pend=new Set(f[tabela]||[]);
+    // tudo que mudou depois do último envio entra na fila
+    (locais||[]).forEach(i=>{ if(i&&i.id&&(i.updatedAt||0)>(m.l||0)) pend.add(i.id); });
+    const novos=(locais||[]).filter(i=>i&&i.id&&pend.has(i.id));
+    // a fila só é limpa depois que o servidor confirma, na leitura seguinte
+    f[tabela]=[...pend]; this.porFila(f);
     await this.enviar(tabela,novos);
     const res=await this.jsonp({acao:'ler',tabela,desde:m.s||0});
+    const conf=await this.jsonp({acao:'confere',tabela,ids:[...pend].join(',')});
+    const ok=new Set((conf&&conf.ids)||[]);
+    const f2=this.fila();
+    f2[tabela]=[...pend].filter(id=>!ok.has(id));
+    this.porFila(f2);
     this.marca(tabela,{l:Date.now(),s:res.hora});
     return res;
   }
@@ -2043,6 +2056,31 @@ function mesclar(local,recebidos){
   [...(local||[]),...(recebidos||[])].forEach(o=>{ if(!o||!o.id) return;
     const a=m.get(o.id); if(!a||(o.updatedAt||0)>=(a.updatedAt||0)) m.set(o.id,o); });
   return [...m.values()];
+}
+/* O quadro viaja como um item só. Sem isto, quem sincroniza por último
+   apaga as listas e os cartões que o outro criou. */
+function mesclarQuadro(local,remoto){
+  if(!remoto||!remoto.listas) return local;
+  if(!local||!local.listas) return remoto;
+  const porId=new Map();
+  const ordem=[];
+  const juntarCartoes=(a,b)=>{
+    const m=new Map();
+    [...(a||[]),...(b||[])].forEach(c=>{ if(!c||!c.id) return;
+      const v=m.get(c.id);
+      if(!v||(c.updatedAt||0)>=(v.updatedAt||0)) m.set(c.id,c); });
+    return [...m.values()].filter(c=>!c.del);
+  };
+  [...(local.listas||[]),...(remoto.listas||[])].forEach(l=>{
+    if(!l||!l.id) return;
+    if(!porId.has(l.id)){ porId.set(l.id,Object.assign({},l)); ordem.push(l.id); return; }
+    const a=porId.get(l.id);
+    const nova=(l.updatedAt||0)>(a.updatedAt||0)? l : a;
+    porId.set(l.id, Object.assign({},nova,{cartoes:juntarCartoes(a.cartoes,l.cartoes)}));
+  });
+  return {id:'quadro',
+          updatedAt:Math.max(local.updatedAt||0,remoto.updatedAt||0),
+          listas:ordem.map(id=>porId.get(id)).filter(l=>!l.del)};
 }
 const TABELAS=[
   ['estudos',()=>estudos,v=>estudos=v],
@@ -2055,7 +2093,7 @@ const TABELAS=[
   ['paginas',()=>paginas,v=>paginas=v],
   ['discursos',()=>discursos,v=>discursos=v],
   ['relatorio',()=>relatorio,v=>relatorio=v],
-  ['quadro',()=>[quadro],v=>{ const q=v.find(x=>x.id==='quadro'); if(q&&q.listas) quadro=q; }]
+  ['quadro',()=>[quadro],v=>{ const q=v.find(x=>x.id==='quadro'); if(q&&q.listas) quadro=mesclarQuadro(quadro,q); }]
 ];
 function statusNuvem(txt,estado){
   const t=$('n_status'); if(t) t.textContent=txt;
@@ -2068,20 +2106,25 @@ async function sincronizar(silencioso){
   if(!Nuvem.url){ if(!silencioso) toast('Conecte a nuvem primeiro.'); return; }
   if(sincronizando) return;
   sincronizando=true; statusNuvem('Sincronizando…');
+  const falhas=[];
   try{
     for(const [nome,pegar,por] of TABELAS){
-      const res=await Nuvem.trocar(nome,pegar());
-      if(res.itens&&res.itens.length){
-        const juntos=mesclar(pegar(),res.itens);
-        por(juntos);
-        if(nome==='quadro') await Store.set(K.quadro,quadro);
-        else await Store.set(K[nome],juntos);
-      }
+      try{
+        const res=await Nuvem.trocar(nome,pegar());
+        if(res.itens&&res.itens.length){
+          const juntos=mesclar(pegar(),res.itens);
+          por(juntos);
+          if(nome==='quadro') await Store.set(K.quadro,quadro);
+          else await Store.set(K[nome],juntos);
+        }
+      }catch(e){ falhas.push(nome); }   // uma tabela com problema não derruba as outras
     }
+    if(falhas.length) throw new Error('não sincronizou: '+falhas.join(', '));
     renderTudo();
     statusNuvem('Sincronizado às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),'on');
     if(!silencioso){ toast('Tudo sincronizado.'); const i=$('n_info'); if(i) i.textContent='Última sincronização agora.'; }
   }catch(e){
+    renderTudo();
     statusNuvem('Erro: '+e.message,'err');
     if(!silencioso) toast('Não deu para sincronizar.');
   }finally{ sincronizando=false; }
