@@ -2166,10 +2166,10 @@ async function testarNuvem(){
    CÓPIA DE SEGURANÇA
    ============================================================ */
 function exportar(){
-  const dados={tipo:'caderno_atina',versao:2,estudos,categorias,joias,quadro,projetos,assembleias,congressos,revisitas,paginas,discursos,relatorio};
+  const dados={tipo:'caderno_estudo_pessoal',versao:2,estudos,categorias,joias,quadro,projetos,assembleias,congressos,revisitas,paginas,discursos,relatorio};
   const blob=new Blob([JSON.stringify(dados,null,2)],{type:'application/json'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
-  a.download=`caderno-atina-${hoje()}.json`; a.click();
+  a.download=`caderno-estudo-pessoal-${hoje()}.json`; a.click();
   toast('Cópia salva no seu aparelho.');
 }
 function importar(){ $('fileImp').click(); }
@@ -2177,7 +2177,7 @@ $('fileImp').addEventListener('change',async ev=>{
   const f=ev.target.files[0]; if(!f) return;
   try{
     const d=JSON.parse(await f.text());
-    if(d.tipo!=='caderno_atina') throw new Error('arquivo diferente');
+    if(d.tipo!=='caderno_estudo_pessoal' && d.tipo!=='caderno_atina') throw new Error('arquivo diferente');
     if(!confirm('Restaurar esta cópia? O que estiver com o mesmo registro será substituído.')) { ev.target.value=''; return; }
     const juntar=(atual,novo)=>{ const m=new Map(); [...atual,...(novo||[])].forEach(o=>{ if(o&&o.id) m.set(o.id,o); }); return [...m.values()]; };
     estudos=juntar(estudos,d.estudos); categorias=juntar(categorias,d.categorias); joias=juntar(joias,d.joias);
