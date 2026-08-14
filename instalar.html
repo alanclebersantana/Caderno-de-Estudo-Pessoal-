@@ -6,6 +6,7 @@
 <title>Instalar o Caderno — Meu Estudo Pessoal</title>
 <meta name="description" content="Como colocar o Caderno — Meu Estudo Pessoal no seu celular, em dois toques.">
 <meta name="theme-color" content="#E6EFF9">
+<link rel="manifest" href="manifest.json">
 <link rel="icon" href="icone-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -237,6 +238,30 @@ if(instalado){
       : 'Seu navegador não abriu a instalação automática. Siga os três passos abaixo — leva meio minuto.';
   };
 }
+
+/* o Chrome só oferece instalar se houver service worker ativo nesta página */
+if('serviceWorker' in navigator && (location.protocol==='https:'||['localhost','127.0.0.1'].indexOf(location.hostname)>=0)){
+  navigator.serviceWorker.register('sw.js').catch(function(){});
+}
+
+/* se em 3 segundos o navegador não ofereceu a instalação, explica o motivo provável */
+setTimeout(function(){
+  if(espera||instalado) return;
+  if(location.protocol==='file:'){
+    recado.textContent='Esta página está aberta como arquivo salvo no aparelho. '+
+      'Para instalar, abra o endereço do Caderno na internet.';
+    return;
+  }
+  var dentroDeApp=/FBAN|FBAV|Instagram|Line|WhatsApp|MicroMessenger/i.test(navigator.userAgent);
+  if(dentroDeApp){
+    recado.textContent='Você está no navegador de dentro de outro aplicativo, que não instala. '+
+      'Toque nos três pontinhos do canto e escolha Abrir no Chrome.';
+    return;
+  }
+  if(!iOS && !/Chrome|Chromium|Edg|SamsungBrowser/i.test(navigator.userAgent)){
+    recado.textContent='Seu navegador não instala aplicativos. Abra esta mesma página no Chrome.';
+  }
+},3000);
 
 window.addEventListener('beforeinstallprompt',function(ev){
   ev.preventDefault(); espera=ev;
