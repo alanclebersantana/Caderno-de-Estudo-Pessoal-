@@ -10,15 +10,21 @@
 <link rel="manifest" href="manifest.json">
 <script>
   (function(){
-    var t='fem', m='claro';
-    try{ t=localStorage.getItem('at_tema')||'fem'; m=localStorage.getItem('at_modo')||'claro'; }catch(e){}
+    var t='fem', m='claro', l='auto';
+    try{ t=localStorage.getItem('at_tema')||'fem'; m=localStorage.getItem('at_modo')||'claro';
+         l=localStorage.getItem('at_letra')||'auto';
+         var f=localStorage.getItem('at_fonte')||'normal';
+         if(f&&f!=='normal') document.documentElement.setAttribute('data-fonte',f); }catch(e){}
     document.documentElement.setAttribute('data-tema',t);
     document.documentElement.setAttribute('data-modo',m);
+    if(l&&l!=='auto') document.documentElement.setAttribute('data-letra',l);
   })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Comic+Neue:wght@400;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --rose:#E48DA9;--rose-deep:#C25E82;--rose-ink:#A8446A;
@@ -39,8 +45,8 @@ html[data-tema="masc"]{
   --teal:#5FA8B5;--teal-deep:#3C7E8C;--gold:#C9A24A;--lilac:#8FA8CF;
   --bg1:#F7FAFD;--bg2:#E7EFF6;
   --focus:rgba(78,134,198,.22);--sombra-btn:rgba(47,107,174,.9);
-  --script:"Comic Sans MS","Comic Neue","Segoe Print",cursive;
-  --sans:"Comic Neue","Comic Sans MS","Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  --script:"Comic Sans MS","Comic Neue","Chalkboard SE","Chalkboard","Segoe Print",sans-serif;
+  --sans:"Comic Sans MS","Comic Neue","Chalkboard SE","Chalkboard","Segoe Print",sans-serif;
 }
 /* ---------- MODO ESCURO ---------- */
 html[data-modo="escuro"]{
@@ -91,7 +97,7 @@ button{cursor:pointer;border:none;background:none;padding:0}
   display:flex;flex-direction:column;gap:18px;overflow-y:auto;
   transform:translateX(-102%);transition:transform .24s ease;box-shadow:0 0 40px -10px rgba(0,0,0,.35)}
 .side.on{transform:none}
-.side .nav{display:flex;flex-direction:column;gap:5px}
+.side .nav{display:flex;flex-direction:column;gap:5px;flex:0 0 auto}
 .side .nav button{display:flex;align-items:center;gap:11px;padding:12px 15px;border-radius:14px;
   font-size:14.5px;font-weight:600;color:var(--ink-soft);text-align:left;width:100%}
 .side .nav button .dot{width:8px;height:8px;border-radius:50%;background:var(--line);flex:0 0 8px}
@@ -308,10 +314,11 @@ button{cursor:pointer;border:none;background:none;padding:0}
 /* ---- capa: fita marcadora + textura diagonal ---- */
 .side .capa{
   margin:0 -16px 12px;
-  padding:24px 16px 20px 36px;
+  padding:22px 14px 18px 36px;
   position:relative;
-  overflow:hidden;
+  overflow:visible;
   display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+  flex:none;min-height:104px;height:auto;
   border-bottom:1px solid color-mix(in srgb, var(--blush-2) 60%, var(--paper));
   background:
     repeating-linear-gradient(45deg,
@@ -337,14 +344,16 @@ button{cursor:pointer;border:none;background:none;padding:0}
   clip-path:polygon(0 0,100% 0,100% 100%,50% 60%,0 100%);
 }
 
+.side .capa-txt{flex:1 1 auto;min-width:0}
 .side .capa small{
   display:block;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
   font-weight:700;color:var(--teal-deep);margin-bottom:3px;
   position:relative;z-index:2;
 }
 .side .capa strong{
-  display:block;font-family:"Caveat",cursive;font-size:31px;line-height:1.02;
+  display:block;font-family:"Caveat",cursive;font-size:29px;line-height:1.18;
   color:var(--rose-ink);font-weight:700;
+  padding-bottom:6px;overflow:visible;overflow-wrap:break-word;
   position:relative;z-index:2;
 }
 .side .capa .fechar-menu{
@@ -365,7 +374,7 @@ html[data-modo="escuro"] .side .capa{
 }
  
 /* ---- navegação: barrinha + ícone ---- */
-.side .nav{gap:1px}
+.side .nav{gap:1px;flex:0 0 auto}
 .side .nav button{
   position:relative;display:flex;align-items:center;gap:11px;
   padding:9px 12px 9px 17px;border-radius:0 13px 13px 0;
@@ -457,13 +466,189 @@ html[data-modo="escuro"] .side .capa{
 @media(min-width:900px){
   .section-head{padding-top:32px}
   .sec-cartao h2{font-size:36px}
-}</style>
+}
+/* ================= PALETAS EXTRAS ================= */
+html[data-tema="verde"]{
+  --rose:#6BAE86;--rose-deep:#478E66;--rose-ink:#31704C;
+  --blush:#E7F3EB;--blush-2:#D6EADD;--blush-3:#BDDCC8;
+  --teal:#6FB6AE;--teal-deep:#3E8981;--gold:#C9A24A;--lilac:#9BC0A9;
+  --bg1:#F7FCF9;--bg2:#E8F2EC;--focus:rgba(107,174,134,.22);--sombra-btn:rgba(71,142,102,.9);
+  --gelo-t:#EEF7F1;
+}
+html[data-tema="lilas"]{
+  --rose:#A98BD4;--rose-deep:#8768BC;--rose-ink:#6B4C9E;
+  --blush:#F0EAFA;--blush-2:#E4DAF5;--blush-3:#D0C0EC;
+  --teal:#7FA9D0;--teal-deep:#4F7CA8;--gold:#C9A24A;--lilac:#B9A3D6;
+  --bg1:#FAF8FE;--bg2:#EDE7F7;--focus:rgba(169,139,212,.22);--sombra-btn:rgba(135,104,188,.9);
+  --gelo-t:#F1EDFA;
+}
+html[data-tema="ambar"]{
+  --rose:#D2954B;--rose-deep:#B4772F;--rose-ink:#8F5C1D;
+  --blush:#FAF0E0;--blush-2:#F4E3C9;--blush-3:#EAD1A9;
+  --teal:#8FA86B;--teal-deep:#63793F;--gold:#C08A34;--lilac:#C7A98A;
+  --bg1:#FDFAF4;--bg2:#F3EADB;--focus:rgba(210,149,75,.22);--sombra-btn:rgba(180,119,47,.9);
+  --gelo-t:#F7F1E5;
+}
+html[data-tema="petroleo"]{
+  --rose:#4FA0A6;--rose-deep:#347F86;--rose-ink:#26646B;
+  --blush:#E3F1F2;--blush-2:#D0E7E9;--blush-3:#B3D8DB;
+  --teal:#7FA9C4;--teal-deep:#4C7C99;--gold:#C9A24A;--lilac:#93B8C4;
+  --bg1:#F6FCFC;--bg2:#E5F0F2;--focus:rgba(79,160,166,.22);--sombra-btn:rgba(52,127,134,.9);
+  --gelo-t:#EDF6F7;
+}
+html[data-modo="escuro"][data-tema="verde"]{--blush:#182620;--blush-2:#21332A;--blush-3:#2F4A3B;--rose-ink:#9FD9B6;--rose-deep:#7CC59A;--focus:rgba(124,197,154,.28)}
+html[data-modo="escuro"][data-tema="lilas"]{--blush:#221D2E;--blush-2:#2E2740;--blush-3:#413660;--rose-ink:#C9B2EC;--rose-deep:#B197DE;--focus:rgba(177,151,222,.28)}
+html[data-modo="escuro"][data-tema="ambar"]{--blush:#2A2118;--blush-2:#3A2E20;--blush-3:#523F2A;--rose-ink:#EBC38A;--rose-deep:#D9A961;--focus:rgba(217,169,97,.28)}
+html[data-modo="escuro"][data-tema="petroleo"]{--blush:#152628;--blush-2:#1D3336;--blush-3:#2A4A4E;--rose-ink:#8FD3D8;--rose-deep:#6BBDC3;--focus:rgba(107,189,195,.28)}
+
+/* ================= LETRAS ================= */
+html[data-letra="script"]{--script:"Caveat","Segoe Script","Bradley Hand",cursive;
+  --sans:"Quicksand","Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif}
+html[data-letra="comic"]{--script:"Comic Sans MS","Comic Neue","Chalkboard SE","Chalkboard","Segoe Print",sans-serif;--sans:"Comic Sans MS","Comic Neue","Chalkboard SE","Chalkboard","Segoe Print",sans-serif}
+html[data-letra="redonda"]{--script:"Quicksand","Segoe UI",system-ui,sans-serif;
+  --sans:"Quicksand","Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif}
+html[data-letra="serifada"]{--script:Georgia,"Times New Roman",serif;
+  --sans:Georgia,"Times New Roman",serif}
+.opcao .letra{display:block;margin-top:8px;font-size:19px;line-height:1;color:var(--rose-ink)}
+.op-cor{min-width:0;flex:0 0 auto;width:calc(33.33% - 7px);padding:11px 10px}
+.op-cor b{font-size:13.5px}
+
+/* ================= CONTAGEM NO MENU ================= */
+.side .nav button .ct{margin-left:auto;font-size:11px;font-weight:700;color:var(--muted);
+  background:var(--gelo);border:1px solid var(--rule);border-radius:99px;padding:2px 8px;min-width:26px;text-align:center}
+.side .nav button.on .ct{background:var(--paper);border-color:var(--blush-3);color:var(--rose-ink)}
+.side .nav button .ct.alerta{background:var(--danger);border-color:var(--danger);color:#fff}
+
+/* ================= INÍCIO — ACERVO ================= */
+.acervo{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:11px}
+.peca{background:var(--paper);border:1px solid var(--rule);border-radius:var(--r);padding:14px;
+  text-align:left;box-shadow:var(--shadow);position:relative}
+.peca .rot{display:block;font-size:12.5px;font-weight:700;color:var(--ink-soft);line-height:1.2;min-height:30px}
+.peca .n{font-family:var(--script);font-size:34px;line-height:.9;color:var(--rose-ink);font-weight:700;display:block;margin-top:6px}
+.peca .sub{display:block;font-size:11px;color:var(--muted);margin-top:5px;line-height:1.3}
+.peca .selo{position:absolute;top:10px;right:10px;background:var(--danger);color:#fff;font-size:10px;
+  font-weight:700;border-radius:99px;padding:2px 7px}
+.aviso{background:var(--blush);border:1px solid var(--blush-3);border-radius:var(--r);padding:14px 16px;margin-bottom:14px}
+.aviso h4{margin:0 0 4px;font-family:var(--script);font-size:22px;color:var(--rose-ink);font-weight:700}
+.aviso p{margin:0;font-size:13px;color:var(--ink-soft)}
+.aviso .btn{margin-top:10px}
+
+/* ================= BUSCA ================= */
+mark{background:var(--blush-3);color:var(--rose-ink);border-radius:4px;padding:0 2px}
+.busca-campo{position:relative}
+.busca-campo .lupa{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px}
+
+/* ================= GRUPOS (livros da Bíblia) ================= */
+.grupo{display:flex;align-items:baseline;gap:9px;margin:18px 0 10px}
+.grupo:first-child{margin-top:2px}
+.grupo h3{font-family:var(--script);font-size:25px;color:var(--rose-ink);margin:0;font-weight:700}
+.grupo span{font-size:11px;font-weight:700;color:var(--muted);background:var(--gelo);
+  border:1px solid var(--rule);border-radius:99px;padding:2px 9px}
+.grupo i{flex:1;height:1px;background:var(--rule);display:block}
+
+/* ================= ANEL DO RELATÓRIO ================= */
+.anelbox{display:flex;align-items:center;gap:16px}
+.anel{width:92px;height:92px;flex:0 0 92px}
+.anel circle{fill:none;stroke-width:9}
+.anel .trilho{stroke:var(--blush-2)}
+.anel .marca{stroke:var(--teal);stroke-linecap:round;transition:stroke-dasharray .4s ease}
+.anelinfo{min-width:0}
+
+/* mapa de calor do calendário */
+.dia.n1{background:var(--gelo-t);border-color:var(--blush-2)}
+.dia.n2{background:var(--blush);border-color:var(--blush-3)}
+.dia.n3{background:var(--blush-3);border-color:var(--rose)}
+.dia.n4{background:var(--rose);border-color:var(--rose-deep)}
+.dia.n3 u,.dia.n3 small{color:var(--rose-ink)}
+.dia.n4 u,.dia.n4 small{color:#fff}
+.escala{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);margin-top:10px}
+.escala i{width:16px;height:10px;border-radius:3px;border:1px solid var(--rule);display:block}
+
+/* ================= REVISITAS ================= */
+.chip-date.al{background:var(--danger);border-color:var(--danger);color:#fff}
+.acoes-mini{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.acoes-mini button{font-size:12px;font-weight:700;border:1px solid var(--rule);background:var(--gelo);
+  color:var(--ink-soft);border-radius:99px;padding:6px 12px}
+.acoes-mini button.pri{background:var(--blush);border-color:var(--blush-3);color:var(--rose-ink)}
+
+/* ================= NUVEM — pendências ================= */
+.pendlista{margin-top:12px;border-top:1px dashed var(--rule)}
+.pendlista div{display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:8px 0;border-bottom:1px dashed var(--rule);font-size:13px;color:var(--ink-soft)}
+.pendlista b{font-size:11px;font-weight:700;border-radius:99px;padding:2px 9px;
+  background:var(--gelo);border:1px solid var(--rule);color:var(--muted)}
+.pendlista b.esperando{background:#FCF2DF;border-color:#EBD9AE;color:#8A6A1E}
+.pendlista b.ok{background:var(--gelo-t);border-color:var(--blush-2);color:var(--teal-deep)}
+
+/* mensagem do mês */
+.previa{background:var(--gelo);border:1px solid var(--rule);border-radius:12px;padding:14px;
+  font-size:13.5px;line-height:1.65;white-space:pre-line;color:var(--ink)}
+/* ================= TAMANHO DA LETRA ================= */
+html{--esc:1}
+html[data-fonte="grande"]{--esc:1.13}
+html[data-fonte="maior"]{--esc:1.28}
+body{font-size:calc(16px * var(--esc))}
+.card h3{font-size:calc(26px * var(--esc))}
+.card .excerpt{font-size:calc(13.5px * var(--esc))}
+.tag{font-size:calc(11px * var(--esc))}
+.chip-date{font-size:calc(10.5px * var(--esc))}
+.inp,select.inp{font-size:calc(16px * var(--esc))}
+.ta{font-size:calc(16px * var(--esc))}
+.hintline{font-size:calc(12.5px * var(--esc))}
+.falta{font-size:calc(13.5px * var(--esc))}
+.section-head p,.sec-cartao p{font-size:calc(12.5px * var(--esc))}
+.side .nav button{font-size:calc(14.5px * var(--esc))}
+.peca .rot{font-size:calc(12.5px * var(--esc))}
+.peca .sub{font-size:calc(11px * var(--esc))}
+.previa{font-size:calc(13.5px * var(--esc))}
+.empty p{font-size:calc(13.5px * var(--esc))}
+
+/* ================= ETIQUETAS ================= */
+.tag.et{background:var(--blush);border-color:var(--blush-3);color:var(--rose-ink)}
+.etq-vazio{color:var(--muted);font-size:13.5px;padding:6px 0}
+
+/* ================= MODO LEITURA ================= */
+.leitura{max-width:680px;margin:0 auto;padding:6px 2px 20px}
+.leitura .quando{font-size:calc(11px * var(--esc));letter-spacing:.14em;text-transform:uppercase;
+  font-weight:700;color:var(--teal-deep)}
+.leitura h1{font-family:var(--script);font-size:calc(34px * var(--esc));color:var(--rose-ink);
+  margin:6px 0 4px;font-weight:700;line-height:1.1}
+.leitura .autor{font-size:calc(13.5px * var(--esc));color:var(--muted);margin:0 0 18px}
+.leitura p.corpo{font-size:calc(17px * var(--esc));line-height:1.85;white-space:pre-line;margin:0 0 18px}
+.leitura h4{font-family:var(--script);font-size:calc(24px * var(--esc));color:var(--rose-ink);
+  margin:22px 0 8px;font-weight:700}
+.leitura .bloco{border-left:3px solid var(--blush-3);padding:2px 0 2px 14px;margin:0 0 14px}
+.leitura .bloco b{display:block;font-size:calc(15px * var(--esc));color:var(--ink)}
+.leitura .bloco span{display:block;font-size:calc(15px * var(--esc));color:var(--ink-soft);
+  line-height:1.7;white-space:pre-line;margin-top:2px}
+
+/* ================= GRÁFICO DO ANO ================= */
+.graf{display:flex;align-items:flex-end;gap:5px;height:130px;margin-top:18px;
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:12px 10px 8px}
+.graf .col{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;
+  align-items:center;gap:5px;min-width:0}
+.graf .col i{display:block;width:100%;background:var(--blush-3);border-radius:5px 5px 2px 2px;min-height:3px;
+  transition:height .3s ease}
+.graf .col.on i{background:var(--rose)}
+.graf .col.cheio i{background:var(--teal)}
+.graf .col u{text-decoration:none;font-size:9.5px;font-weight:700;color:var(--muted);text-transform:lowercase}
+.graf .col.on u{color:var(--rose-ink)}
+.graf-topo{display:flex;justify-content:space-between;align-items:baseline;margin-top:16px}
+.graf-topo b{font-family:var(--script);font-size:22px;color:var(--rose-ink);font-weight:700}
+.graf-topo span{font-size:12px;color:var(--muted)}
+
+/* ================= LIXEIRA ================= */
+.card.apagado{opacity:.9}
+.card.apagado h3{color:var(--muted)}
+.lixo-topo{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+.lixo-topo p{margin:0;font-size:12.5px;color:var(--muted)}
+</style>
 </head>
 <body>
 <div class="drawer-bg" id="drawerBg" onclick="fecharMenu()"></div>
 <aside class="side" id="drawer">
   <div class="capa">
-  <div>
+  <div class="capa-txt">
     <small>Caderno</small>
     <strong>Meu Estudo Pessoal</strong>
   </div>
@@ -471,6 +656,16 @@ html[data-modo="escuro"] .side .capa{
 </div>
 
 <div class="nav">
+
+  <button class="g1" data-a="inicio" onclick="go('inicio')">
+    <svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg>
+    Início
+  </button>
+
+  <button class="g1" data-a="busca" onclick="go('busca')">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M15.5 15.5 20 20"/></svg>
+    Buscar
+  </button>
 
   <button class="g1" data-a="estudo" onclick="go('estudo')">
     <svg viewBox="0 0 24 24"><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"/></svg>
@@ -520,6 +715,16 @@ html[data-modo="escuro"] .side .capa{
   <button class="g4" data-a="revisitas" onclick="go('revisitas')">
     <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v4.5h-4.5"/></svg>
     Revisitas
+  </button>
+
+  <button class="g4" data-a="etiquetas" onclick="go('etiquetas')">
+    <svg viewBox="0 0 24 24"><path d="M4 4.5h7l8.5 8.5-6.5 6.5L4.5 11z"/><circle cx="8.5" cy="9" r="1.4"/></svg>
+    Etiquetas
+  </button>
+
+  <button class="g4" data-a="lixeira" onclick="go('lixeira')">
+    <svg viewBox="0 0 24 24"><path d="M5 7h14"/><path d="M9 7V5h6v2"/><path d="M6.5 7l1 12.5h9L18 7"/></svg>
+    Lixeira
   </button>
 
 </div>
@@ -576,6 +781,32 @@ html[data-modo="escuro"] .side .capa{
       <button class="tb-acao" onclick="abrirConfig()" aria-label="Configurações">⚙</button>
     </div>
 
+    <!-- ============ INÍCIO ============ -->
+    <section id="v_inicio" style="display:none">
+      <div class="section-head">
+        <div><h2>Início</h2><p>Tudo o que você já guardou, num relance.</p></div>
+      </div>
+      <div class="wrap">
+        <div id="inicioAvisos"></div>
+        <div class="acervo" id="inicioGrade"></div>
+      </div>
+    </section>
+
+    <!-- ============ BUSCA ============ -->
+    <section id="v_busca" style="display:none">
+      <div class="section-head">
+        <div><h2>Buscar</h2><p>Uma palavra procura em tudo o que você anotou.</p></div>
+      </div>
+      <div class="wrap">
+        <div class="busca-campo">
+          <input class="inp" id="bq" placeholder="Digite uma palavra…" oninput="renderBusca()"
+                 autocomplete="off" enterkeyhint="search">
+        </div>
+        <div class="chips" id="bChips" style="margin-top:12px"></div>
+        <div id="listBusca" class="list"></div>
+      </div>
+    </section>
+
     <!-- ============ ESTUDO PESSOAL ============ -->
     <section id="v_estudo">
       <div class="section-head">
@@ -613,9 +844,18 @@ html[data-modo="escuro"] .side .capa{
       </div>
       <div class="wrap">
         <div class="resumo">
-          <span class="kicker">Total do mês</span>
-          <div class="total" id="rc_total">0 h</div>
-          <div class="falta" id="rc_falta">Escolha uma meta para acompanhar quanto falta.</div>
+          <div class="anelbox">
+            <svg class="anel" viewBox="0 0 84 84" aria-hidden="true">
+              <circle class="trilho" cx="42" cy="42" r="34"></circle>
+              <circle class="marca" id="rc_anel" cx="42" cy="42" r="34"
+                      stroke-dasharray="0 214" transform="rotate(-90 42 42)"></circle>
+            </svg>
+            <div class="anelinfo">
+              <span class="kicker">Total do mês</span>
+              <div class="total" id="rc_total">0 h</div>
+              <div class="falta" id="rc_falta">Escolha uma meta para acompanhar quanto falta.</div>
+            </div>
+          </div>
           <div class="bar" style="margin-top:12px"><i id="rc_bar" style="width:0%"></i></div>
           <div id="rc_ano">
             <div class="cab"><b id="rc_anoTotal">0 h</b><span id="rc_anoRotulo">Ano de serviço</span></div>
@@ -636,6 +876,8 @@ html[data-modo="escuro"] .side .capa{
             </div>
           </div>
         </div>
+        <button class="btn btn-soft btn-sm" style="width:100%;margin-bottom:16px" onclick="abrirMes()">
+          Gerar mensagem do mês</button>
         <div class="mesbar">
           <button onclick="mudarMes(-1)">‹</button>
           <b id="rc_mes"></b>
@@ -643,7 +885,12 @@ html[data-modo="escuro"] .side .capa{
         </div>
         <div class="semana"><span>dom</span><span>seg</span><span>ter</span><span>qua</span><span>qui</span><span>sex</span><span>sáb</span></div>
         <div class="grade" id="rc_grade"></div>
+        <div class="escala">menos<i style="background:var(--gelo-t)"></i><i style="background:var(--blush)"></i>
+          <i style="background:var(--blush-3)"></i><i style="background:var(--rose)"></i>mais horas</div>
         <p class="hintline" id="rc_detalhe"></p>
+        <div class="graf-topo"><b id="rc_grafTotal">0 h</b><span id="rc_grafRotulo">Ano de serviço</span></div>
+        <div class="graf" id="rc_graf"></div>
+        <p class="hintline">Toque numa coluna para abrir aquele mês.</p>
       </div>
     </section>
 
@@ -653,7 +900,10 @@ html[data-modo="escuro"] .side .capa{
         <div><h2>Jóias Espirituais</h2><p>O texto bíblico, o que ele revelou e de onde veio a informação.</p></div>
         <button class="round" onclick="abrirJoia()">+</button>
       </div>
-      <div class="wrap"><div id="listJoias" class="list"></div></div>
+      <div class="wrap">
+        <div class="chips" id="chipsLivros"></div>
+        <div id="listJoias" class="list"></div>
+      </div>
     </section>
 
     <!-- ============ ORGANIZAÇÃO (quadro) ============ -->
@@ -700,7 +950,35 @@ html[data-modo="escuro"] .side .capa{
         <div><h2>Revisitas</h2><p>Nome, endereço, quando conversou e quando voltar.</p></div>
         <button class="round" onclick="abrirRevisita()">+</button>
       </div>
-      <div class="wrap"><div id="listRevisitas" class="list"></div></div>
+      <div class="wrap">
+        <div class="chips" id="chipsRevisitas"></div>
+        <div id="listRevisitas" class="list"></div>
+      </div>
+    </section>
+
+    <!-- ============ ETIQUETAS ============ -->
+    <section id="v_etiquetas" style="display:none">
+      <div class="section-head">
+        <div><h2>Etiquetas</h2><p>A mesma palavra marcando estudos, jóias, páginas e revisitas.</p></div>
+      </div>
+      <div class="wrap">
+        <div class="chips" id="chipsEtq"></div>
+        <div id="listEtq" class="list"></div>
+      </div>
+    </section>
+
+    <!-- ============ LIXEIRA ============ -->
+    <section id="v_lixeira" style="display:none">
+      <div class="section-head">
+        <div><h2>Lixeira</h2><p>O que você excluiu fica aqui por 30 dias.</p></div>
+      </div>
+      <div class="wrap">
+        <div class="lixo-topo">
+          <p id="lixoInfo"></p>
+          <button class="btn btn-quiet btn-sm" onclick="esvaziarLixeira()">Esvaziar agora</button>
+        </div>
+        <div id="listLixo" class="list"></div>
+      </div>
     </section>
   </main>
 </div>
@@ -735,9 +1013,11 @@ html[data-modo="escuro"] .side .capa{
       <div><h4>Perguntas de reflexão</h4><p class="hint">As duas fixas, mais quantas você quiser.</p></div>
       <button class="btn btn-line btn-sm" id="btnPerg" onclick="addPerguntas()">+ Adicionar perguntas</button></div>
       <div id="e_perguntas"></div></div>
+    <div class="field"><label class="lbl">Etiquetas</label><input class="inp" id="e_tags" placeholder="Separe por vírgula: batismo, oração"><p class="hintline">Aparecem na seção Etiquetas, juntando tudo o que tem a mesma marca.</p></div>
   </div>
   <div class="sheet-foot">
     <button class="btn btn-danger btn-sm left" id="e_del" style="display:none" onclick="excluirEstudo()">Excluir</button>
+    <button class="btn btn-soft btn-sm" onclick="lerEstudo()">Modo leitura</button>
     <button class="btn btn-quiet" onclick="fecharEstudo()">Fechar</button>
     <button class="btn btn-rose" onclick="salvarEstudo(true)">Concluir e salvar</button>
   </div>
@@ -770,6 +1050,7 @@ html[data-modo="escuro"] .side .capa{
       <textarea class="ta" id="j_texto" placeholder="Escreva livremente…"></textarea></div>
     <div class="field"><label class="lbl">Fonte da matéria</label>
       <textarea class="ta sm" id="j_fonte" placeholder="Ex.: A Sentinela, agosto de 2026, p. 12, § 5"></textarea></div>
+    <div class="field"><label class="lbl">Etiquetas</label><input class="inp" id="j_tags" placeholder="Separe por vírgula: batismo, oração"><p class="hintline">Aparecem na seção Etiquetas, juntando tudo o que tem a mesma marca.</p></div>
   </div>
   <div class="sheet-foot">
     <button class="btn btn-danger btn-sm left" id="j_del" style="display:none" onclick="excluirJoia()">Excluir</button>
@@ -879,6 +1160,7 @@ html[data-modo="escuro"] .side .capa{
     </div>
     <div class="field"><label class="lbl">Anotações</label>
       <textarea class="ta" id="r_texto" placeholder="Assunto conversado, publicação deixada, o que preparar para a próxima visita…"></textarea></div>
+    <div class="field"><label class="lbl">Etiquetas</label><input class="inp" id="r_tags" placeholder="Separe por vírgula: batismo, oração"><p class="hintline">Aparecem na seção Etiquetas, juntando tudo o que tem a mesma marca.</p></div>
   </div>
   <div class="sheet-foot">
     <button class="btn btn-danger btn-sm left" id="r_del" style="display:none" onclick="excluirRevisita()">Excluir</button>
@@ -899,6 +1181,7 @@ html[data-modo="escuro"] .side .capa{
     </div>
     <div class="field"><label class="lbl">Página</label>
       <textarea class="ta pag" id="pg_texto" placeholder="Escreva à vontade…"></textarea></div>
+    <div class="field"><label class="lbl">Etiquetas</label><input class="inp" id="pg_tags" placeholder="Separe por vírgula: batismo, oração"><p class="hintline">Aparecem na seção Etiquetas, juntando tudo o que tem a mesma marca.</p></div>
   </div>
   <div class="sheet-foot">
     <button class="btn btn-danger btn-sm left" id="pg_del" style="display:none" onclick="excluirPagina()">Excluir</button>
@@ -921,9 +1204,11 @@ html[data-modo="escuro"] .side .capa{
     <div class="field"><label class="lbl">Tema</label><input class="inp" id="dp_tema" placeholder="Tema do discurso"></div>
     <div class="field"><label class="lbl">Anotações</label>
       <textarea class="ta" id="dp_texto" placeholder="Escreva livremente…"></textarea></div>
+    <div class="field"><label class="lbl">Etiquetas</label><input class="inp" id="dp_tags" placeholder="Separe por vírgula: batismo, oração"><p class="hintline">Aparecem na seção Etiquetas, juntando tudo o que tem a mesma marca.</p></div>
   </div>
   <div class="sheet-foot">
     <button class="btn btn-danger btn-sm left" id="dp_del" style="display:none" onclick="excluirDiscurso()">Excluir</button>
+    <button class="btn btn-soft btn-sm" onclick="lerDiscurso()">Modo leitura</button>
     <button class="btn btn-quiet" onclick="fecharDiscurso()">Fechar</button>
     <button class="btn btn-rose" onclick="salvarDiscurso(true)">Concluir e salvar</button>
   </div>
@@ -956,16 +1241,67 @@ html[data-modo="escuro"] .side .capa{
     <button class="x" onclick="fechar('sheetConfig')">×</button></div>
   <div class="sheet-body">
     <div class="field">
-      <label class="lbl">Tema</label>
+      <label class="lbl">Cor</label>
       <div class="opcoes">
-        <button class="opcao" id="op_fem" onclick="setTema('fem')">
-          <b>Feminino</b><small>Rosa, letra manuscrita</small>
+        <button class="opcao op-cor" id="op_fem" data-tema-op="fem" onclick="setTema('fem')">
+          <b>Rosa</b>
           <span class="amostra"><i style="background:#E48DA9"></i><i style="background:#F1CBDA"></i><i style="background:#7CC5C2"></i></span>
         </button>
-        <button class="opcao" id="op_masc" onclick="setTema('masc')">
-          <b>Masculino</b><small>Azul, letra Comic Sans</small>
+        <button class="opcao op-cor" id="op_masc" data-tema-op="masc" onclick="setTema('masc')">
+          <b>Azul</b>
           <span class="amostra"><i style="background:#4E86C6"></i><i style="background:#B9D4EE"></i><i style="background:#5FA8B5"></i></span>
         </button>
+        <button class="opcao op-cor" data-tema-op="verde" onclick="setTema('verde')">
+          <b>Verde</b>
+          <span class="amostra"><i style="background:#6BAE86"></i><i style="background:#BDDCC8"></i><i style="background:#6FB6AE"></i></span>
+        </button>
+        <button class="opcao op-cor" data-tema-op="lilas" onclick="setTema('lilas')">
+          <b>Lilás</b>
+          <span class="amostra"><i style="background:#A98BD4"></i><i style="background:#D0C0EC"></i><i style="background:#7FA9D0"></i></span>
+        </button>
+        <button class="opcao op-cor" data-tema-op="ambar" onclick="setTema('ambar')">
+          <b>Âmbar</b>
+          <span class="amostra"><i style="background:#D2954B"></i><i style="background:#EAD1A9"></i><i style="background:#8FA86B"></i></span>
+        </button>
+        <button class="opcao op-cor" data-tema-op="petroleo" onclick="setTema('petroleo')">
+          <b>Petróleo</b>
+          <span class="amostra"><i style="background:#4FA0A6"></i><i style="background:#B3D8DB"></i><i style="background:#7FA9C4"></i></span>
+        </button>
+      </div>
+    </div>
+    <div class="field">
+      <label class="lbl">Letra</label>
+      <div class="opcoes">
+        <button class="opcao" data-letra-op="auto" onclick="setLetra('auto')">
+          <b>Da cor escolhida</b><small>Rosa vem manuscrita, azul vem Comic Sans</small>
+        </button>
+        <button class="opcao" data-letra-op="script" onclick="setLetra('script')">
+          <b>Manuscrita</b><small>Caveat, com traço de caneta</small>
+          <span class="letra" style="font-family:'Caveat',cursive">Meu caderno</span>
+        </button>
+        <button class="opcao" data-letra-op="comic" onclick="setLetra('comic')">
+          <b>Comic</b><small>Arredondada, fácil de ler</small>
+          <span class="letra" style="font-family:'Comic Sans MS','Comic Neue','Chalkboard SE','Chalkboard','Segoe Print',sans-serif">Meu caderno</span>
+        </button>
+        <button class="opcao" data-letra-op="redonda" onclick="setLetra('redonda')">
+          <b>Redonda</b><small>Quicksand em tudo, bem limpa</small>
+          <span class="letra" style="font-family:'Quicksand',sans-serif">Meu caderno</span>
+        </button>
+        <button class="opcao" data-letra-op="serifada" onclick="setLetra('serifada')">
+          <b>Serifada</b><small>Ar de livro impresso</small>
+          <span class="letra" style="font-family:Georgia,serif">Meu caderno</span>
+        </button>
+      </div>
+    </div>
+    <div class="field">
+      <label class="lbl">Tamanho da letra</label>
+      <div class="opcoes">
+        <button class="opcao" data-fonte-op="normal" onclick="setFonte('normal')">
+          <b>Normal</b><small>Como sempre foi</small></button>
+        <button class="opcao" data-fonte-op="grande" onclick="setFonte('grande')">
+          <b>Grande</b><small>Um pouco maior em tudo</small></button>
+        <button class="opcao" data-fonte-op="maior" onclick="setFonte('maior')">
+          <b>Maior</b><small>Para ler sem apertar os olhos</small></button>
       </div>
     </div>
     <div class="field" style="margin-bottom:0">
@@ -980,6 +1316,10 @@ html[data-modo="escuro"] .side .capa{
           <span class="amostra"><i style="background:#181E24"></i><i style="background:#0F141A"></i></span>
         </button>
       </div>
+    </div>
+    <div class="sec"><div class="sec-top"><div><h4>Avisos das revisitas</h4>
+      <p class="hint">Um lembrete quando a data de retorno chegar.</p></div></div>
+      <button class="btn btn-soft btn-sm" style="width:100%" onclick="pedirAvisos()">Avisar no celular</button>
     </div>
     <div class="sec"><div class="sec-top"><div><h4>Nuvem e cópias</h4>
       <p class="hint">Sincronização entre o celular e o computador.</p></div></div>
@@ -1003,6 +1343,7 @@ html[data-modo="escuro"] .side .capa{
     </div>
     <button class="btn btn-line btn-sm" style="width:100%;margin-top:8px" onclick="testarNuvem()">Testar gravação</button>
     <p class="hintline" id="n_info"></p>
+    <div class="pendlista" id="n_pend"></div>
     <div class="sec"><div class="sec-top"><div><h4>Cópia em arquivo</h4>
       <p class="hint">Serve como segurança extra, mesmo usando a nuvem.</p></div></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -1010,6 +1351,33 @@ html[data-modo="escuro"] .side .capa{
         <button class="btn btn-quiet btn-sm" style="flex:1" onclick="importar()">Restaurar cópia</button></div></div>
   </div>
   <div class="sheet-foot"><button class="btn btn-quiet" onclick="fechar('sheetNuvem')">Fechar</button></div>
+</div></div>
+
+<div class="sheet-bg" id="sheetLer"><div class="sheet">
+  <div class="sheet-head"><div><span class="kicker" id="ler_tipo">Leitura</span><h3 id="ler_ttl">Modo leitura</h3></div>
+    <button class="x" onclick="fechar('sheetLer')">×</button></div>
+  <div class="spiral"></div>
+  <div class="sheet-body"><div class="leitura" id="ler_corpo"></div></div>
+  <div class="sheet-foot"><button class="btn btn-quiet" onclick="fechar('sheetLer')">Voltar</button></div>
+</div></div>
+
+<div class="sheet-bg" id="sheetMes"><div class="sheet small">
+  <div class="sheet-head"><div><span class="kicker">Relatório de campo</span><h3 id="hMes">Mensagem do mês</h3></div>
+    <button class="x" onclick="fechar('sheetMes')">×</button></div>
+  <div class="sheet-body">
+    <div class="field"><label class="lbl">Seu nome</label>
+      <input class="inp" id="m_nome" placeholder="Como aparece na mensagem" oninput="montarMes()">
+      <p class="hintline">Fica guardado só neste aparelho.</p></div>
+    <div class="field"><label class="lbl">Observação para o mês</label>
+      <input class="inp" id="m_obs" placeholder="Opcional" oninput="montarMes()"></div>
+    <div class="field" style="margin-bottom:0"><label class="lbl">Como vai ficar</label>
+      <div class="previa" id="m_previa"></div></div>
+  </div>
+  <div class="sheet-foot">
+    <button class="btn btn-soft" onclick="copiarMes()">Copiar</button>
+    <button class="btn btn-rose" onclick="enviarMes()">Enviar no WhatsApp</button>
+    <button class="btn btn-quiet" onclick="fechar('sheetMes')">Fechar</button>
+  </div>
 </div></div>
 
 <input type="file" id="fileImp" accept="application/json,.json" style="display:none">
@@ -1061,13 +1429,15 @@ const METAS=[['','Sem meta',0],['campanha','Pioneiro Auxiliar Campanha — 15 h'
              ['auxiliar','Pioneiro Auxiliar — 30 h',30],['regular','Pioneiro Regular — 50 h',50],
              ['especial','Pioneiro Especial — 100 h',100]];
 let quadro={id:'quadro',listas:[],updatedAt:0};
-let catFiltro='__todas';
+let catFiltro='__todas', livroFiltro='__todos', revFiltro='retorno', etqFiltro='', bFiltro='__todos';
 let edEstudo=null,edJoia=null,edProjeto=null,edEvento=null,edEventoTipo='assembleia',edRevisita=null,edCard=null;
 
-const ABAS=[['estudo','Estudo Pessoal'],['livre','Caderno Livre'],['joias','Jóias Espirituais'],
+const ABAS=[['inicio','Início'],['busca','Buscar'],
+            ['estudo','Estudo Pessoal'],['livre','Caderno Livre'],['joias','Jóias Espirituais'],
             ['discursos','Discurso Público'],['org','Organização'],['planner','Planner'],
             ['assembleias','Assembleias'],['congressos','Congressos'],
-            ['relatorio','Relatório de Campo'],['revisitas','Revisitas']];
+            ['relatorio','Relatório de Campo'],['revisitas','Revisitas'],
+            ['etiquetas','Etiquetas'],['lixeira','Lixeira']];
 const CORES=['#E48DA9','#7CC5C2','#D8B15C','#B9A3D6','#8FBF7F','#E39A6B'];
 const PERGUNTAS_FIXAS=['O que isso me ensina sobre Jeová?','Como posso usar o que aprendi para ajudar outros?'];
 
@@ -1096,6 +1466,7 @@ function go(a){
   const nome=(ABAS.find(([id])=>id===a)||['','Caderno'])[1];
   const t=$('tb_aba'); if(t) t.textContent=nome;
   fecharMenu();
+  if(a==='busca'){ const c=$('bq'); if(c) setTimeout(()=>c.focus(),250); }
   window.scrollTo({top:0,behavior:'smooth'});
   try{ localStorage.setItem('at_aba',a); }catch(e){}
 }
@@ -1111,6 +1482,7 @@ async function carregar(){
   paginas=await Store.lista(K.paginas);
   discursos=await Store.lista(K.discursos);
   relatorio=await Store.lista(K.relatorio);
+  await purgarLixeira();
   const q=await Store.objeto(K.quadro);
   quadro=q&&q.listas?q:{id:'quadro',updatedAt:Date.now(),listas:[
     {id:uid(),nome:'A fazer',cards:[]},{id:uid(),nome:'Fazendo',cards:[]},{id:uid(),nome:'Feito',cards:[]}]};
@@ -1118,8 +1490,11 @@ async function carregar(){
 }
 function renderTudo(){ renderCategorias(); renderEstudos(); renderJoias(); renderBoard(); renderProjetos();
   renderEventos('assembleia'); renderEventos('congresso'); renderRevisitas();
-  renderPaginas(); renderDiscursos(); renderRelatorio(); }
-async function guardar(chave,lista){ await Store.set(K[chave],lista); agendarSync(); }
+  renderPaginas(); renderDiscursos(); renderRelatorio(); renderExtras(); }
+function renderExtras(){
+  try{ renderMenuContagens(); renderInicio(); renderEtiquetas(); renderLixeira(); renderBusca(); }catch(e){}
+}
+async function guardar(chave,lista){ await Store.set(K[chave],lista); agendarSync(); renderExtras(); }
 /* ============================================================
    ESTUDO PESSOAL
    ============================================================ */
@@ -1189,7 +1564,7 @@ function renderEstudos(){
 let temPerguntas=false;
 function abrirEstudo(id){
   edEstudo=id||null; temPerguntas=false;
-  $('e_data').value=hoje(); $('e_titulo').value=''; $('e_texto').value='';
+  $('e_data').value=hoje(); $('e_titulo').value=''; $('e_texto').value=''; $('e_tags').value='';
   $('e_textos').innerHTML=''; $('e_personagens').innerHTML=''; $('e_links').innerHTML=''; $('e_perguntas').innerHTML='';
   $('btnPerg').style.display=''; $('e_del').style.display='none'; $('hEstudo').textContent='Novo estudo';
   $('e_cat').value = catFiltro==='__todas'?'':catFiltro;
@@ -1197,6 +1572,7 @@ function abrirEstudo(id){
     const e=estudos.find(x=>x.id===id); if(!e) return;
     $('hEstudo').textContent='Editar estudo'; $('e_del').style.display='';
     $('e_data').value=e.data||hoje(); $('e_titulo').value=e.titulo||''; $('e_texto').value=e.texto||''; $('e_cat').value=e.categoria||'';
+    $('e_tags').value=(e.etiquetas||[]).join(', ');
     (e.textos||[]).forEach(t=>addTexto(t.ref,t.nota));
     (e.personagens||[]).forEach(p=>addPersonagem(p.nome,p.licoes));
     (e.links||[]).forEach(l=>addLink(l.rotulo,l.url));
@@ -1276,13 +1652,15 @@ function coletarEstudo(){
   document.querySelectorAll('#qFixas .q-resp').forEach(t=>perguntas.push({pergunta:t.dataset.q,resposta:t.value.trim()}));
   document.querySelectorAll('#qExtras .qbox').forEach(b=>{ const q=b.querySelector('.q-txt').value.trim();
     if(q) perguntas.push({pergunta:q,resposta:b.querySelector('.q-resp-extra').value.trim()}); });
-  return {data:val('e_data')||hoje(),titulo:val('e_titulo'),categoria:$('e_cat').value,texto:val('e_texto'),textos,personagens,links,perguntas};
+  return {data:val('e_data')||hoje(),titulo:val('e_titulo'),categoria:$('e_cat').value,texto:val('e_texto'),
+          textos,personagens,links,perguntas,etiquetas:lerEtiquetas('e_tags')};
 }
 async function salvarEstudo(fechando){
   const d=coletarEstudo();
   if(!d.titulo&&!d.texto&&!d.textos.length&&!d.personagens.length){ if(fechando) toast('Escreva algo antes de salvar.'); return false; }
   if(!d.titulo) d.titulo='Sem título';
   const obj={id:edEstudo||uid(),...d,updatedAt:Date.now()};
+  edEstudo=obj.id;
   estudos=estudos.filter(e=>e.id!==obj.id).concat(obj);
   await guardar('estudos',estudos); renderEstudos();
   if(fechando){ fechar('sheetEstudo'); toast('Estudo salvo.'); }
@@ -1291,8 +1669,8 @@ async function salvarEstudo(fechando){
 async function fecharEstudo(){ const ok=await salvarEstudo(false); fechar('sheetEstudo'); if(ok) toast('Salvo automaticamente.'); }
 async function excluirEstudo(){
   if(!edEstudo||!confirm('Excluir este estudo?')) return;
-  estudos=estudos.filter(e=>e.id!==edEstudo).concat({id:edEstudo,del:true,updatedAt:Date.now()});
-  await Store.set(K.estudos,estudos); agendarSync();
+  estudos=estudos.filter(e=>e.id!==edEstudo).concat(paraLixeira(estudos.find(_x=>_x.id===edEstudo)||{id:edEstudo}));
+  await Store.set(K.estudos,estudos); agendarSync(); renderExtras();
   fechar('sheetEstudo'); renderEstudos(); toast('Estudo excluído.');
 }
 
@@ -1300,29 +1678,53 @@ async function excluirEstudo(){
    JÓIAS ESPIRITUAIS
    ============================================================ */
 function renderJoias(){
-  const el=$('listJoias');
+  const el=$('listJoias'), chips=$('chipsLivros');
   const js=joias.filter(j=>!j.del);
-  if(!js.length){ el.innerHTML=`<div class="empty"><h3>Nenhuma jóia guardada</h3>
+  if(!js.length){
+    if(chips) chips.innerHTML='';
+    el.innerHTML=`<div class="empty"><h3>Nenhuma jóia guardada</h3>
     <p>Anote aquele texto que te chamou a atenção e de onde veio a explicação.</p>
     <button class="btn btn-rose" onclick="abrirJoia()">+ Nova jóia</button></div>`; return; }
-  el.innerHTML=js.sort((a,b)=>(b.data||'').localeCompare(a.data||'')).map(j=>`
-    <article class="card teal" onclick="abrirJoia('${j.id}')">
-      <div class="meta"><span class="chip-date t">${dataBR(j.data)||'Sem data'}</span></div>
-      <h3>${esc(j.tema)||'Sem texto bíblico'}</h3>
-      ${j.texto?`<p class="excerpt">${esc(j.texto)}</p>`:''}
-      ${j.fonte?`<div class="tags"><span class="tag">${esc(j.fonte).slice(0,70)}</span></div>`:''}</article>`).join('');
+
+  const grupos=new Map();
+  js.forEach(j=>{ const l=livroDaJoia(j)||'Outros textos';
+    if(!grupos.has(l)) grupos.set(l,[]); grupos.get(l).push(j); });
+  const ordem=[...grupos.keys()].sort((a,b)=>ordemLivro(a)-ordemLivro(b));
+
+  if(chips){
+    chips.innerHTML=`<button class="${livroFiltro==='__todos'?'on':''}" data-l="__todos"
+        onclick="filtrarLivro(this.dataset.l)">Todos · ${js.length}</button>`+
+      ordem.map(l=>`<button class="${livroFiltro===l?'on':''}" data-l="${esc(l)}"
+        onclick="filtrarLivro(this.dataset.l)">${esc(l)} · ${grupos.get(l).length}</button>`).join('');
+  }
+  const mostrar=livroFiltro==='__todos'?ordem:ordem.filter(l=>l===livroFiltro);
+  if(!mostrar.length){ livroFiltro='__todos'; return renderJoias(); }
+
+  el.innerHTML=mostrar.map(l=>{
+    const itens=grupos.get(l).sort((a,b)=>versoDe(a)-versoDe(b)||(b.data||'').localeCompare(a.data||''));
+    return `<div class="grupo"><h3>${esc(l)}</h3><span>${itens.length}</span><i></i></div>`+
+      itens.map(j=>`<article class="card teal" onclick="abrirJoia('${j.id}')">
+        <div class="meta"><span class="chip-date t">${dataBR(j.data)||'Sem data'}</span></div>
+        <h3>${esc(j.tema)||'Sem texto bíblico'}</h3>
+        ${j.texto?`<p class="excerpt">${esc(j.texto)}</p>`:''}
+        ${etiquetasHTML(j,j.fonte?[esc(j.fonte).slice(0,70)]:[])}</article>`).join('');
+  }).join('');
 }
+function filtrarLivro(l){ livroFiltro=l; renderJoias(); }
+
 function abrirJoia(id){
   edJoia=id||null;
-  $('j_data').value=hoje(); $('j_tema').value=''; $('j_texto').value=''; $('j_fonte').value='';
+  $('j_data').value=hoje(); $('j_tema').value=''; $('j_texto').value=''; $('j_fonte').value=''; $('j_tags').value='';
   $('j_del').style.display='none'; $('hJoia').textContent='Nova jóia';
   if(id){ const j=joias.find(x=>x.id===id); if(!j) return;
     $('hJoia').textContent='Editar jóia'; $('j_del').style.display='';
-    $('j_data').value=j.data||hoje(); $('j_tema').value=j.tema||''; $('j_texto').value=j.texto||''; $('j_fonte').value=j.fonte||''; }
+    $('j_data').value=j.data||hoje(); $('j_tema').value=j.tema||''; $('j_texto').value=j.texto||''; $('j_fonte').value=j.fonte||'';
+    $('j_tags').value=(j.etiquetas||[]).join(', '); }
   abrir('sheetJoia');
 }
 async function salvarJoia(fechando){
-  const d={data:val('j_data')||hoje(),tema:val('j_tema'),texto:val('j_texto'),fonte:val('j_fonte')};
+  const d={data:val('j_data')||hoje(),tema:val('j_tema'),texto:val('j_texto'),fonte:val('j_fonte'),
+           etiquetas:lerEtiquetas('j_tags')};
   if(!d.tema&&!d.texto){ if(fechando) toast('Escreva ao menos o texto bíblico.'); return false; }
   const obj={id:edJoia||uid(),...d,updatedAt:Date.now()};
   joias=joias.filter(j=>j.id!==obj.id).concat(obj);
@@ -1333,8 +1735,8 @@ async function salvarJoia(fechando){
 async function fecharJoia(){ const ok=await salvarJoia(false); fechar('sheetJoia'); if(ok) toast('Salvo automaticamente.'); }
 async function excluirJoia(){
   if(!edJoia||!confirm('Excluir esta jóia?')) return;
-  joias=joias.filter(j=>j.id!==edJoia).concat({id:edJoia,del:true,updatedAt:Date.now()});
-  await Store.set(K.joias,joias); agendarSync();
+  joias=joias.filter(j=>j.id!==edJoia).concat(paraLixeira(joias.find(_x=>_x.id===edJoia)||{id:edJoia}));
+  await Store.set(K.joias,joias); agendarSync(); renderExtras();
   fechar('sheetJoia'); renderJoias(); toast('Jóia excluída.');
 }
 
@@ -1570,8 +1972,8 @@ async function salvarProjeto(fechando){
 async function fecharProjeto(){ const ok=await salvarProjeto(false); fechar('sheetProjeto'); if(ok) toast('Salvo automaticamente.'); }
 async function excluirProjeto(){
   if(!edProjeto||!confirm('Excluir este projeto?')) return;
-  projetos=projetos.filter(p=>p.id!==edProjeto).concat({id:edProjeto,del:true,updatedAt:Date.now()});
-  await Store.set(K.projetos,projetos); agendarSync();
+  projetos=projetos.filter(p=>p.id!==edProjeto).concat(paraLixeira(projetos.find(_x=>_x.id===edProjeto)||{id:edProjeto}));
+  await Store.set(K.projetos,projetos); agendarSync(); renderExtras();
   fechar('sheetProjeto'); renderProjetos(); toast('Projeto excluído.');
 }
 
@@ -1661,7 +2063,8 @@ async function fecharEvento(){ const ok=await salvarEvento(false); fechar('sheet
 async function excluirEvento(){
   if(!edEvento||!confirm('Excluir este registro?')) return;
   const chave=edEventoTipo==='assembleia'?'assembleias':'congressos';
-  let lista=listaEvento(edEventoTipo).filter(a=>a.id!==edEvento).concat({id:edEvento,del:true,updatedAt:Date.now()});
+  const _ev=listaEvento(edEventoTipo).find(_x=>_x.id===edEvento)||{id:edEvento};
+  let lista=listaEvento(edEventoTipo).filter(a=>a.id!==edEvento).concat(paraLixeira(_ev));
   await Store.set(K[chave],lista); agendarSync();
   if(edEventoTipo==='assembleia') assembleias=lista; else congressos=lista;
   fechar('sheetEvento'); renderEventos(edEventoTipo); toast('Excluído.');
@@ -1670,35 +2073,97 @@ async function excluirEvento(){
 /* ============================================================
    REVISITAS
    ============================================================ */
+function diasAte(iso){
+  if(!iso) return null;
+  const a=new Date(hoje()+'T00:00:00'), b=new Date(iso+'T00:00:00');
+  return Math.round((b-a)/86400000);
+}
+function situacaoRevisita(r){
+  const d=diasAte(r.retorno);
+  if(d===null) return {ordem:3,rotulo:'Sem data de retorno',alerta:false};
+  if(d<0)  return {ordem:0,rotulo:`Atrasada há ${-d} dia${d===-1?'':'s'}`,alerta:true};
+  if(d===0) return {ordem:0,rotulo:'Voltar hoje',alerta:true};
+  if(d===1) return {ordem:1,rotulo:'Voltar amanhã',alerta:false};
+  if(d<=7) return {ordem:1,rotulo:`Voltar em ${d} dias`,alerta:false};
+  return {ordem:2,rotulo:'Voltar '+dataBR(r.retorno),alerta:false};
+}
+const revisitasVencidas=()=>revisitas.filter(r=>!r.del&&situacaoRevisita(r).ordem===0);
 function renderRevisitas(){
-  const el=$('listRevisitas');
+  const el=$('listRevisitas'), chips=$('chipsRevisitas');
   const rs=revisitas.filter(r=>!r.del);
-  if(!rs.length){ el.innerHTML=`<div class="empty"><h3>Nenhuma revisita anotada</h3>
+  if(!rs.length){
+    if(chips) chips.innerHTML='';
+    el.innerHTML=`<div class="empty"><h3>Nenhuma revisita anotada</h3>
     <p>Guarde nome, endereço e quando você combinou de voltar.</p>
     <button class="btn btn-rose" onclick="abrirRevisita()">+ Nova revisita</button></div>`; return; }
-  el.innerHTML=rs.sort((a,b)=>(a.retorno||'9999').localeCompare(b.retorno||'9999')).map(r=>{
-    const atrasada=r.retorno&&r.retorno<hoje();
+
+  const vencidas=rs.filter(r=>situacaoRevisita(r).ordem===0).length;
+  const semana=rs.filter(r=>situacaoRevisita(r).ordem<=1).length;
+  if(chips) chips.innerHTML=[
+    ['retorno',`Esperando retorno · ${vencidas}`],
+    ['semana',`Nesta semana · ${semana}`],
+    ['todas',`Todas · ${rs.length}`]
+  ].map(([id,rot])=>`<button class="${revFiltro===id?'on':''}" onclick="filtrarRev('${id}')">${rot}</button>`).join('');
+
+  let lista=rs;
+  if(revFiltro==='retorno') lista=rs.filter(r=>situacaoRevisita(r).ordem===0);
+  if(revFiltro==='semana')  lista=rs.filter(r=>situacaoRevisita(r).ordem<=1);
+  if(!lista.length){
+    el.innerHTML=`<div class="empty"><h3>Nada para retornar agora</h3>
+      <p>Nenhuma revisita venceu nesta faixa. Veja todas para conferir as próximas.</p>
+      <button class="btn btn-soft" onclick="filtrarRev('todas')">Ver todas</button></div>`; return; }
+
+  el.innerHTML=lista.sort((a,b)=>{
+      const sa=situacaoRevisita(a), sb=situacaoRevisita(b);
+      return sa.ordem-sb.ordem || (a.retorno||'9999').localeCompare(b.retorno||'9999');
+    }).map(r=>{
+    const st=situacaoRevisita(r);
     return `<article class="card teal" onclick="abrirRevisita('${r.id}')">
       <div class="meta">
-        ${r.retorno?`<span class="chip-date ${atrasada?'':'t'}">Voltar ${dataBR(r.retorno)}</span>`:''}
+        <span class="chip-date ${st.alerta?'al':'t'}">${st.rotulo}</span>
         ${r.contato?`<span class="tag">Contato ${dataBR(r.contato)}</span>`:''}</div>
       <h3>${esc(r.nome)||'Sem nome'}</h3>
       ${r.endereco?`<p class="excerpt">${esc(r.endereco)}</p>`:''}
-      ${r.texto?`<div class="tags"><span class="tag">${esc(r.texto).slice(0,60)}…</span></div>`:''}</article>`;
+      ${etiquetasHTML(r,r.texto?[esc(r.texto).slice(0,60)+'…']:[])}
+      <div class="acoes-mini" onclick="event.stopPropagation()">
+        <button class="pri" onclick="voltouHoje('${r.id}')">Voltei hoje</button>
+        <button onclick="adiarRevisita('${r.id}',7)">Adiar 7 dias</button>
+      </div></article>`;
   }).join('');
 }
+function filtrarRev(f){ revFiltro=f; renderRevisitas(); }
+function somaDias(iso,n){ const d=new Date((iso||hoje())+'T00:00:00'); d.setDate(d.getDate()+n);
+  return d.toISOString().slice(0,10); }
+async function mexerRevisita(id,mudanca,aviso){
+  const r=revisitas.find(x=>x.id===id&&!x.del); if(!r) return;
+  const obj={...r,...mudanca,updatedAt:Date.now()};
+  revisitas=revisitas.filter(x=>x.id!==id).concat(obj);
+  await guardar('revisitas',revisitas); renderRevisitas(); toast(aviso);
+}
+function voltouHoje(id){
+  mexerRevisita(id,{contato:hoje(),retorno:somaDias(hoje(),7)},'Contato de hoje registrado. Volta marcada para daqui a 7 dias.');
+}
+function adiarRevisita(id,n){
+  const r=revisitas.find(x=>x.id===id&&!x.del); if(!r) return;
+  const base=(r.retorno&&r.retorno>hoje())?r.retorno:hoje();
+  mexerRevisita(id,{retorno:somaDias(base,n)},'Retorno adiado para '+dataBR(somaDias(base,n))+'.');
+}
+
 function abrirRevisita(id){
   edRevisita=id||null;
   $('r_nome').value=''; $('r_end').value=''; $('r_contato').value=hoje(); $('r_retorno').value=''; $('r_texto').value='';
+  $('r_tags').value='';
   $('r_del').style.display='none'; $('hRevisita').textContent='Nova revisita';
   if(id){ const r=revisitas.find(x=>x.id===id); if(!r) return;
     $('hRevisita').textContent='Editar revisita'; $('r_del').style.display='';
     $('r_nome').value=r.nome||''; $('r_end').value=r.endereco||''; $('r_contato').value=r.contato||'';
-    $('r_retorno').value=r.retorno||''; $('r_texto').value=r.texto||''; }
+    $('r_retorno').value=r.retorno||''; $('r_texto').value=r.texto||'';
+    $('r_tags').value=(r.etiquetas||[]).join(', '); }
   abrir('sheetRevisita');
 }
 async function salvarRevisita(fechando){
-  const d={nome:val('r_nome'),endereco:val('r_end'),contato:$('r_contato').value,retorno:$('r_retorno').value,texto:val('r_texto')};
+  const d={nome:val('r_nome'),endereco:val('r_end'),contato:$('r_contato').value,retorno:$('r_retorno').value,
+           texto:val('r_texto'),etiquetas:lerEtiquetas('r_tags')};
   if(!d.nome&&!d.endereco&&!d.texto){ if(fechando) toast('Escreva ao menos o nome.'); return false; }
   if(!d.nome) d.nome='Sem nome';
   const obj={id:edRevisita||uid(),...d,updatedAt:Date.now()};
@@ -1710,8 +2175,8 @@ async function salvarRevisita(fechando){
 async function fecharRevisita(){ const ok=await salvarRevisita(false); fechar('sheetRevisita'); if(ok) toast('Salvo automaticamente.'); }
 async function excluirRevisita(){
   if(!edRevisita||!confirm('Excluir esta revisita?')) return;
-  revisitas=revisitas.filter(r=>r.id!==edRevisita).concat({id:edRevisita,del:true,updatedAt:Date.now()});
-  await Store.set(K.revisitas,revisitas); agendarSync();
+  revisitas=revisitas.filter(r=>r.id!==edRevisita).concat(paraLixeira(revisitas.find(_x=>_x.id===edRevisita)||{id:edRevisita}));
+  await Store.set(K.revisitas,revisitas); agendarSync(); renderExtras();
   fechar('sheetRevisita'); renderRevisitas(); toast('Revisita excluída.');
 }
 
@@ -1734,16 +2199,18 @@ function renderPaginas(){
 }
 function abrirPagina(id){
   edPagina=id||null;
-  $('pg_data').value=hoje(); $('pg_titulo').value=''; $('pg_texto').value='';
+  $('pg_data').value=hoje(); $('pg_titulo').value=''; $('pg_texto').value=''; $('pg_tags').value='';
   $('pg_del').style.display='none'; $('hPagina').textContent='Nova página';
   if(id){ const p=paginas.find(x=>x.id===id); if(!p) return;
     $('hPagina').textContent='Página'; $('pg_del').style.display='';
-    $('pg_data').value=p.data||hoje(); $('pg_titulo').value=p.titulo||''; $('pg_texto').value=p.texto||''; }
+    $('pg_data').value=p.data||hoje(); $('pg_titulo').value=p.titulo||''; $('pg_texto').value=p.texto||'';
+    $('pg_tags').value=(p.etiquetas||[]).join(', '); }
   abrir('sheetPagina');
   if(!id) setTimeout(()=>$('pg_titulo').focus(),200);
 }
 async function salvarPagina(fechando){
-  const d={data:val('pg_data')||hoje(),titulo:val('pg_titulo'),texto:$('pg_texto').value};
+  const d={data:val('pg_data')||hoje(),titulo:val('pg_titulo'),texto:$('pg_texto').value,
+           etiquetas:lerEtiquetas('pg_tags')};
   if(!d.titulo&&!d.texto.trim()){ if(fechando) toast('Escreva algo antes de salvar.'); return false; }
   if(!d.titulo) d.titulo='Página sem título';
   const obj={id:edPagina||uid(),...d,updatedAt:Date.now()};
@@ -1755,8 +2222,8 @@ async function salvarPagina(fechando){
 async function fecharPagina(){ const ok=await salvarPagina(false); fechar('sheetPagina'); if(ok) toast('Salvo automaticamente.'); }
 async function excluirPagina(){
   if(!edPagina||!confirm('Excluir esta página?')) return;
-  paginas=paginas.filter(p=>p.id!==edPagina).concat({id:edPagina,del:true,updatedAt:Date.now()});
-  await Store.set(K.paginas,paginas); agendarSync();
+  paginas=paginas.filter(p=>p.id!==edPagina).concat(paraLixeira(paginas.find(_x=>_x.id===edPagina)||{id:edPagina}));
+  await Store.set(K.paginas,paginas); agendarSync(); renderExtras();
   fechar('sheetPagina'); renderPaginas(); toast('Página excluída.');
 }
 
@@ -1779,18 +2246,22 @@ function renderDiscursos(){
 function abrirDiscurso(id){
   edDiscurso=id||null;
   $('dp_data').value=hoje(); $('dp_orador').value=''; $('dp_cong').value=''; $('dp_tema').value=''; $('dp_texto').value='';
+  $('dp_tags').value='';
   $('dp_del').style.display='none'; $('hDiscurso').textContent='Novo discurso';
   if(id){ const d=discursos.find(x=>x.id===id); if(!d) return;
     $('hDiscurso').textContent='Editar discurso'; $('dp_del').style.display='';
     $('dp_data').value=d.data||hoje(); $('dp_orador').value=d.orador||''; $('dp_cong').value=d.cong||'';
-    $('dp_tema').value=d.tema||''; $('dp_texto').value=d.texto||''; }
+    $('dp_tema').value=d.tema||''; $('dp_texto').value=d.texto||'';
+    $('dp_tags').value=(d.etiquetas||[]).join(', '); }
   abrir('sheetDiscurso');
 }
 async function salvarDiscurso(fechando){
-  const d={data:val('dp_data')||hoje(),orador:val('dp_orador'),cong:val('dp_cong'),tema:val('dp_tema'),texto:val('dp_texto')};
+  const d={data:val('dp_data')||hoje(),orador:val('dp_orador'),cong:val('dp_cong'),tema:val('dp_tema'),
+           texto:val('dp_texto'),etiquetas:lerEtiquetas('dp_tags')};
   if(!d.tema&&!d.orador&&!d.texto){ if(fechando) toast('Escreva ao menos o tema.'); return false; }
   if(!d.tema) d.tema='Sem tema';
   const obj={id:edDiscurso||uid(),...d,updatedAt:Date.now()};
+  edDiscurso=obj.id;
   discursos=discursos.filter(x=>x.id!==obj.id).concat(obj);
   await guardar('discursos',discursos); renderDiscursos();
   if(fechando){ fechar('sheetDiscurso'); toast('Discurso salvo.'); }
@@ -1799,8 +2270,8 @@ async function salvarDiscurso(fechando){
 async function fecharDiscurso(){ const ok=await salvarDiscurso(false); fechar('sheetDiscurso'); if(ok) toast('Salvo automaticamente.'); }
 async function excluirDiscurso(){
   if(!edDiscurso||!confirm('Excluir este discurso?')) return;
-  discursos=discursos.filter(x=>x.id!==edDiscurso).concat({id:edDiscurso,del:true,updatedAt:Date.now()});
-  await Store.set(K.discursos,discursos); agendarSync();
+  discursos=discursos.filter(x=>x.id!==edDiscurso).concat(paraLixeira(discursos.find(_x=>_x.id===edDiscurso)||{id:edDiscurso}));
+  await Store.set(K.discursos,discursos); agendarSync(); renderExtras();
   fechar('sheetDiscurso'); renderDiscursos(); toast('Discurso excluído.');
 }
 
@@ -1835,14 +2306,20 @@ function renderRelatorio(){
   const dias=new Date(ano,mes,0).getDate();
   const inicio=new Date(ano,mes-1,1).getDay();
   const h=hoje();
-  let cel='';
-  for(let i=0;i<inicio;i++) cel+=`<div class="dia fora"></div>`;
+  const doMes=[];
   for(let d=1;d<=dias;d++){
     const iso=`${ano}-${String(mes).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const m=minDoDia(iso);
-    cel+=`<button class="dia ${m?'tem':''} ${iso===h?'hoje':''}" onclick="abrirDia('${iso}')">
-      <u>${d}</u>${m?`<small>${fmtCurto(m)}</small>`:''}</button>`;
+    doMes.push([iso,minDoDia(iso)]);
   }
+  const maior=Math.max(0,...doMes.map(x=>x[1]));
+  let cel='';
+  for(let i=0;i<inicio;i++) cel+=`<div class="dia fora"></div>`;
+  doMes.forEach(([iso,m],i)=>{
+    let n='';
+    if(m>0&&maior>0){ const f=m/maior; n=' n'+(f>.75?4:f>.5?3:f>.25?2:1); }
+    cel+=`<button class="dia${n} ${iso===h?'hoje':''}" onclick="abrirDia('${iso}')">
+      <u>${i+1}</u>${m?`<small>${fmtCurto(m)}</small>`:''}</button>`;
+  });
   $('rc_grade').innerHTML=cel;
 
   const total=minutosDoMes(mesAtual);
@@ -1852,6 +2329,9 @@ function renderRelatorio(){
   const alvo=meta*60;
   const pct=alvo?Math.min(100,Math.round(total*100/alvo)):0;
   $('rc_bar').style.width=pct+'%';
+  const anel=$('rc_anel');
+  if(anel){ const volta=213.6, parte=alvo?Math.min(1,total/alvo):0;
+    anel.setAttribute('stroke-dasharray',(volta*parte).toFixed(1)+' '+volta); }
   const est=$('rc_estudos'); if(est) est.value=estudosDoMes(mesAtual)||'';
   const qtd=estudosDoMes(mesAtual);
   renderAno(metaCod);
@@ -1867,6 +2347,7 @@ function renderRelatorio(){
   partes.push(diasComServico?`${diasComServico} dia(s) com serviço neste mês`:'Nenhum dia lançado neste mês ainda');
   if(qtd) partes.push(`${qtd} estudo(s) bíblico(s) dirigido(s)`);
   $('rc_detalhe').textContent=partes.join(' · ')+'.';
+  graficoAno();
 }
 /* o ano de serviço vai de setembro a agosto do ano seguinte */
 function anoDeServico(mes){
@@ -1963,22 +2444,35 @@ async function salvarMeta(){
 /* ============================================================
    CONFIGURAÇÕES — tema e modo
    ============================================================ */
-const K_TEMA='at_tema', K_MODO='at_modo';
-const temaAtual=()=>{ try{ return localStorage.getItem(K_TEMA)||'fem'; }catch(e){ return 'fem'; } };
-const modoAtual=()=>{ try{ return localStorage.getItem(K_MODO)||'claro'; }catch(e){ return 'claro'; } };
+const K_TEMA='at_tema', K_MODO='at_modo', K_LETRA='at_letra', K_FONTE='at_fonte';
+const TEMAS={fem:['#FBE9EF','#2A1E25'],masc:['#E6EFF9','#17242F'],verde:['#E7F3EB','#182620'],
+             lilas:['#F0EAFA','#221D2E'],ambar:['#FAF0E0','#2A2118'],petroleo:['#E3F1F2','#152628']};
+const NOME_TEMA={fem:'Rosa',masc:'Azul',verde:'Verde',lilas:'Lilás',ambar:'Âmbar',petroleo:'Petróleo'};
+function guardado(k,d){ try{ return localStorage.getItem(k)||d; }catch(e){ return d; } }
+const temaAtual=()=>guardado(K_TEMA,'fem');
+const modoAtual=()=>guardado(K_MODO,'claro');
+const letraAtual=()=>guardado(K_LETRA,'auto');
+const fonteAtual=()=>guardado(K_FONTE,'normal');
 function aplicarVisual(){
-  const t=temaAtual(), m=modoAtual();
-  document.documentElement.setAttribute('data-tema',t);
-  document.documentElement.setAttribute('data-modo',m);
-  const cor = m==='escuro' ? (t==='masc'?'#17242F':'#2A1E25') : (t==='masc'?'#E6EFF9':'#FBE9EF');
-  const meta=document.querySelector('meta[name="theme-color"]'); if(meta) meta.setAttribute('content',cor);
-  ['fem','masc'].forEach(x=>{ const b=$('op_'+x); if(b) b.classList.toggle('on',x===t); });
+  const t=temaAtual(), m=modoAtual(), l=letraAtual(), f=fonteAtual(), raiz=document.documentElement;
+  raiz.setAttribute('data-tema',t);
+  raiz.setAttribute('data-modo',m);
+  if(l==='auto') raiz.removeAttribute('data-letra'); else raiz.setAttribute('data-letra',l);
+  if(f==='normal') raiz.removeAttribute('data-fonte'); else raiz.setAttribute('data-fonte',f);
+  const par=TEMAS[t]||TEMAS.fem;
+  const meta=document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute('content', m==='escuro'?par[1]:par[0]);
+  document.querySelectorAll('[data-tema-op]').forEach(b=>b.classList.toggle('on',b.dataset.temaOp===t));
+  document.querySelectorAll('[data-letra-op]').forEach(b=>b.classList.toggle('on',b.dataset.letraOp===l));
+  document.querySelectorAll('[data-fonte-op]').forEach(b=>b.classList.toggle('on',b.dataset.fonteOp===f));
   ['claro','escuro'].forEach(x=>{ const b=$('op_'+x); if(b) b.classList.toggle('on',x===m); });
 }
-function setTema(t){ try{ localStorage.setItem(K_TEMA,t); }catch(e){} aplicarVisual();
-  toast(t==='masc'?'Tema masculino ativado.':'Tema feminino ativado.'); }
-function setModo(m){ try{ localStorage.setItem(K_MODO,m); }catch(e){} aplicarVisual();
-  toast(m==='escuro'?'Modo escuro ativado.':'Modo claro ativado.'); }
+function guardarVisual(k,v){ try{ localStorage.setItem(k,v); }catch(e){} aplicarVisual(); }
+function setTema(t){ guardarVisual(K_TEMA,t); toast('Cor '+(NOME_TEMA[t]||t)+'.'); }
+function setModo(m){ guardarVisual(K_MODO,m); toast(m==='escuro'?'Modo escuro ativado.':'Modo claro ativado.'); }
+function setLetra(l){ guardarVisual(K_LETRA,l); toast(l==='auto'?'Letra combinando com a cor.':'Letra trocada.'); }
+function setFonte(f){ guardarVisual(K_FONTE,f);
+  toast(f==='normal'?'Tamanho normal.':(f==='grande'?'Letra grande.':'Letra maior.')); }
 function abrirConfig(){ fecharMenu(); aplicarVisual(); abrir('sheetConfig'); }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') fecharMenu(); });
 
@@ -2122,14 +2616,33 @@ async function sincronizar(silencioso){
     if(falhas.length) throw new Error('não sincronizou: '+falhas.join(', '));
     renderTudo();
     statusNuvem('Sincronizado às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),'on');
+    renderPendencias();
     if(!silencioso){ toast('Tudo sincronizado.'); const i=$('n_info'); if(i) i.textContent='Última sincronização agora.'; }
   }catch(e){
     renderTudo();
     statusNuvem('Erro: '+e.message,'err');
+    renderPendencias();
     if(!silencioso) toast('Não deu para sincronizar.');
   }finally{ sincronizando=false; }
 }
+function renderPendencias(){
+  const el=$('n_pend'); if(!el) return;
+  const f=Nuvem.fila(), linhas=[];
+  const ROT={estudos:'Estudo pessoal',categorias:'Categorias',joias:'Jóias',projetos:'Planner',
+    assembleias:'Assembleias',congressos:'Congressos',revisitas:'Revisitas',paginas:'Caderno livre',
+    discursos:'Discursos',relatorio:'Relatório de campo',quadro:'Organização'};
+  let total=0;
+  Object.keys(ROT).forEach(t=>{
+    const n=(f[t]||[]).length; if(!n) return; total+=n;
+    linhas.push(`<div><span>${ROT[t]}</span><b class="esperando">${n} esperando</b></div>`);
+  });
+  if(!Nuvem.url){ el.innerHTML=''; return; }
+  el.innerHTML = total
+    ? linhas.join('')+`<div><span>Ao todo</span><b class="esperando">${total} registro(s)</b></div>`
+    : `<div><span>Tudo o que você escreveu já subiu</span><b class="ok">em dia</b></div>`;
+}
 function abrirNuvem(){
+  renderPendencias();
   $('n_url').value=Nuvem.url;
   $('n_info').textContent=Nuvem.url?'Conectado a esta URL.':'Ainda não conectado.';
   abrir('sheetNuvem');
@@ -2194,6 +2707,469 @@ $('fileImp').addEventListener('change',async ev=>{
   ev.target.value='';
 });
 
+
+/* ============================================================
+   LIVROS DA BÍBLIA — usados para agrupar as jóias
+   ============================================================ */
+const LIVROS=[
+ ['Gênesis','gn ge gen genesis'],['Êxodo','ex exo êxodo exodo'],['Levítico','lv le lev levitico'],
+ ['Números','nm nu num numeros'],['Deuteronômio','dt de deu deut deuteronomio'],['Josué','js jos josue'],
+ ['Juízes','jz jui juizes'],['Rute','rt ru rute'],['1 Samuel','1sa 1sm 1 samuel'],['2 Samuel','2sa 2sm 2 samuel'],
+ ['1 Reis','1re 1rs 1 reis'],['2 Reis','2re 2rs 2 reis'],['1 Crônicas','1cr 1cro 1 cronicas'],
+ ['2 Crônicas','2cr 2cro 2 cronicas'],['Esdras','ed esd esdras'],['Neemias','ne nee neemias'],
+ ['Ester','et est ester'],['Jó','jo job'],['Salmos','sal sl salmo salmos'],
+ ['Provérbios','pro pv prov proverbio proverbios'],['Eclesiastes','ec ecl eclesiastes'],
+ ['Cântico de Salomão','can cant cantico canticos ct'],['Isaías','is isa isaias'],
+ ['Jeremias','je jr jer jeremias'],['Lamentações','la lam lamentacoes'],['Ezequiel','ez eze ezequiel'],
+ ['Daniel','da dn dan daniel'],['Oseias','os ose oseias'],['Joel','jl joel'],['Amós','am amo amos'],
+ ['Obadias','ob oba obadias'],['Jonas','jon jonas'],['Miqueias','miq mq miqueias'],['Naum','na nau naum'],
+ ['Habacuque','hab hc habacuque'],['Sofonias','sof sf sofonias'],['Ageu','ag age ageu'],
+ ['Zacarias','za zc zac zacarias'],['Malaquias','mal ml malaquias'],['Mateus','mt mat mateus'],
+ ['Marcos','mr mc mar marcos'],['Lucas','lu lc luc lucas'],['João','joao jo joa'],['Atos','at ato atos'],
+ ['Romanos','ro rm rom romanos'],['1 Coríntios','1co 1cor 1 corintios'],['2 Coríntios','2co 2cor 2 corintios'],
+ ['Gálatas','gal gl galatas'],['Efésios','ef efe efesios'],['Filipenses','fil fp filipenses'],
+ ['Colossenses','col cl colossenses'],['1 Tessalonicenses','1te 1ts 1 tessalonicenses'],
+ ['2 Tessalonicenses','2te 2ts 2 tessalonicenses'],['1 Timóteo','1ti 1tm 1 timoteo'],
+ ['2 Timóteo','2ti 2tm 2 timoteo'],['Tito','tit tt tito'],['Filêmon','flm fm filemon'],
+ ['Hebreus','he hb heb hebreus'],['Tiago','tg tia tiago'],['1 Pedro','1pe 1pd 1 pedro'],
+ ['2 Pedro','2pe 2pd 2 pedro'],['1 João','1jo 1 joao'],['2 João','2jo 2 joao'],['3 João','3jo 3 joao'],
+ ['Judas','jud jd judas'],['Apocalipse','ap apo re rev apocalipse']
+];
+const semAcento=t=>(t||'').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+function chaveLivro(t){
+  return semAcento(t).replace(/[.,;:]/g,' ').replace(/(\d)\s*([a-z])/g,'$1$2').replace(/\s+/g,' ').trim();
+}
+const IDX_LIVRO=(()=>{ const m={};
+  LIVROS.forEach(([nome,alt])=>{ [nome,...alt.split(' ')].forEach(a=>{ const k=chaveLivro(a); if(k&&!(k in m)) m[k]=nome; }); });
+  return m; })();
+const ORDEM_LIVRO=(()=>{ const m={}; LIVROS.forEach(([n],i)=>m[n]=i); return m; })();
+const ordemLivro=n=>n in ORDEM_LIVRO?ORDEM_LIVRO[n]:999;
+function acharLivro(txt){
+  const k=chaveLivro(txt); if(!k) return null;
+  const toks=k.split(' ');
+  for(let n=Math.min(3,toks.length);n>=1;n--){
+    const alvo=toks.slice(0,n).join(' ').replace(/\d+$/,'').trim();
+    if(alvo && IDX_LIVRO[alvo]) return IDX_LIVRO[alvo];
+    const cru=toks.slice(0,n).join(' ');
+    if(IDX_LIVRO[cru]) return IDX_LIVRO[cru];
+  }
+  return null;
+}
+const livroDaJoia=j=>acharLivro(j.tema)||acharLivro(j.texto);
+function versoDe(j){
+  const m=(j.tema||'').match(/(\d+)\s*[:.]\s*(\d+)/);
+  return m?Number(m[1])*1000+Number(m[2]):999999;
+}
+
+/* ============================================================
+   ETIQUETAS
+   ============================================================ */
+function lerEtiquetas(id){
+  const el=$(id); if(!el) return [];
+  return [...new Set(el.value.split(',').map(t=>t.trim().replace(/\s+/g,' ')).filter(Boolean))].slice(0,12);
+}
+function porEtiquetas(id,lista){ const el=$(id); if(el) el.value=(lista||[]).join(', '); }
+function etiquetasHTML(o,extras){
+  const t=(extras||[]).map(x=>`<span class="tag">${x}</span>`);
+  (o.etiquetas||[]).forEach(e=>t.push(`<span class="tag etq">#${esc(e)}</span>`));
+  return t.length?`<div class="tags">${t.join('')}</div>`:'';
+}
+const FONTES_ETQ=[
+  ['Estudo pessoal',()=>estudos,e=>e.titulo,'abrirEstudo'],
+  ['Jóia espiritual',()=>joias,j=>j.tema,'abrirJoia'],
+  ['Página',()=>paginas,p=>p.titulo,'abrirPagina'],
+  ['Discurso público',()=>discursos,d=>d.tema,'abrirDiscurso'],
+  ['Revisita',()=>revisitas,r=>r.nome,'abrirRevisita']
+];
+function todasEtiquetas(){
+  const m=new Map();
+  FONTES_ETQ.forEach(([tipo,pegar])=>pegar().filter(x=>!x.del).forEach(o=>
+    (o.etiquetas||[]).forEach(e=>m.set(e,(m.get(e)||0)+1))));
+  return [...m.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'pt-BR'));
+}
+function renderEtiquetas(){
+  const chips=$('chipsEtq'), el=$('listEtq'); if(!chips||!el) return;
+  const todas=todasEtiquetas();
+  if(!todas.length){
+    chips.innerHTML='';
+    el.innerHTML=`<div class="empty"><h3>Nenhuma etiqueta ainda</h3>
+      <p>Ao salvar um estudo, uma jóia, uma página, um discurso ou uma revisita, escreva uma
+      palavra no campo Etiquetas. A mesma palavra junta tudo aqui.</p></div>`; return; }
+  if(!todas.some(([e])=>e===etqFiltro)) etqFiltro=todas[0][0];
+  chips.innerHTML=todas.map(([e,n])=>`<button class="${etqFiltro===e?'on':''}" data-e="${esc(e)}"
+    onclick="filtrarEtq(this.dataset.e)">#${esc(e)} · ${n}</button>`).join('');
+  const achados=[];
+  FONTES_ETQ.forEach(([tipo,pegar,titulo,acao])=>pegar().filter(x=>!x.del&&(x.etiquetas||[]).includes(etqFiltro))
+    .forEach(o=>achados.push({tipo,titulo:titulo(o)||'Sem título',data:o.data||o.contato||'',
+      texto:o.texto||o.endereco||'',acao:`${acao}('${o.id}')`})));
+  el.innerHTML=achados.sort((a,b)=>(b.data||'').localeCompare(a.data||'')).map(a=>`
+    <article class="card teal" onclick="${a.acao}">
+      <div class="meta"><span class="chip-date t">${a.data?dataBR(a.data):'Sem data'}</span>
+        <span class="tag">${a.tipo}</span></div>
+      <h3>${esc(a.titulo)}</h3>
+      ${a.texto?`<p class="excerpt">${esc(a.texto)}</p>`:''}</article>`).join('');
+}
+function filtrarEtq(e){ etqFiltro=e; renderEtiquetas(); }
+
+/* ============================================================
+   BUSCA GLOBAL
+   ============================================================ */
+function itensBusca(){
+  const out=[];
+  const juntar=(...p)=>p.filter(Boolean).join(' ');
+  estudos.filter(x=>!x.del).forEach(e=>out.push({tipo:'estudo',rot:'Estudo pessoal',titulo:e.titulo||'Sem título',
+    data:e.data,corpo:juntar(e.texto,(e.textos||[]).map(t=>t.ref+' '+t.nota).join(' '),
+      (e.personagens||[]).map(x=>x.nome+' '+x.licoes).join(' '),
+      (e.perguntas||[]).map(x=>x.pergunta+' '+x.resposta).join(' '),(e.etiquetas||[]).join(' ')),
+    acao:`abrirEstudo('${e.id}')`}));
+  joias.filter(x=>!x.del).forEach(j=>out.push({tipo:'joia',rot:'Jóia espiritual',titulo:j.tema||'Sem texto',
+    data:j.data,corpo:juntar(j.texto,j.fonte,(j.etiquetas||[]).join(' ')),acao:`abrirJoia('${j.id}')`}));
+  paginas.filter(x=>!x.del).forEach(p=>out.push({tipo:'pagina',rot:'Caderno livre',titulo:p.titulo||'Página',
+    data:p.data,corpo:juntar(p.texto,(p.etiquetas||[]).join(' ')),acao:`abrirPagina('${p.id}')`}));
+  discursos.filter(x=>!x.del).forEach(d=>out.push({tipo:'discurso',rot:'Discurso público',titulo:d.tema||'Sem tema',
+    data:d.data,corpo:juntar(d.orador,d.cong,d.texto,(d.etiquetas||[]).join(' ')),acao:`abrirDiscurso('${d.id}')`}));
+  revisitas.filter(x=>!x.del).forEach(r=>out.push({tipo:'revisita',rot:'Revisita',titulo:r.nome||'Sem nome',
+    data:r.contato,corpo:juntar(r.endereco,r.texto,(r.etiquetas||[]).join(' ')),acao:`abrirRevisita('${r.id}')`}));
+  projetos.filter(x=>!x.del).forEach(p=>out.push({tipo:'projeto',rot:'Planner',titulo:p.nome||'Projeto',
+    data:p.prazo,corpo:juntar(p.obj,(p.etapas||[]).map(e=>e.nome+' '+e.nota).join(' ')),acao:`abrirProjeto('${p.id}')`}));
+  [['assembleia','Assembleia',()=>assembleias],['congresso','Congresso',()=>congressos]].forEach(([t,rot,pegar])=>
+    pegar().filter(x=>!x.del).forEach(a=>out.push({tipo:t,rot,titulo:a.nome||rot,data:a.data,
+      corpo:juntar(a.local,(a.itens||[]).map(i=>i.tema+' '+i.orador+' '+i.texto+' '+
+        (i.revisao?i.revisao.pergunta+' '+i.revisao.resposta:'')).join(' ')),
+      acao:`abrirEvento('${t}','${a.id}')`})));
+  (quadro.listas||[]).forEach(l=>(l.cards||[]).forEach(c=>out.push({tipo:'cartao',rot:'Organização',
+    titulo:c.titulo||'Cartão',data:c.prazo,corpo:juntar(c.desc,(c.checklist||[]).map(i=>i.txt).join(' ')),
+    acao:`abrirCard('${l.id}','${c.id}')`})));
+  relatorio.filter(x=>!x.del&&x.id.startsWith('d_')&&x.nota).forEach(r=>out.push({tipo:'campo',rot:'Relatório de campo',
+    titulo:'Dia '+dataBR(r.data),data:r.data,corpo:r.nota,acao:`abrirDia('${r.data}')`}));
+  return out;
+}
+function realce(txt,termo){
+  const t=esc((txt||'').replace(/\s+/g,' ').trim());
+  if(!termo) return t.slice(0,160);
+  const i=semAcento(t).indexOf(semAcento(termo));
+  if(i<0) return t.slice(0,160);
+  const de=Math.max(0,i-50), ate=Math.min(t.length,i+termo.length+90);
+  return (de?'…':'')+t.slice(de,i)+'<mark>'+t.slice(i,i+termo.length)+'</mark>'+
+         t.slice(i+termo.length,ate)+(ate<t.length?'…':'');
+}
+function renderBusca(){
+  const campo=$('bq'), el=$('listBusca'), chips=$('bChips'); if(!campo||!el) return;
+  const termo=campo.value.trim();
+  if(termo.length<2){
+    if(chips) chips.innerHTML='';
+    el.innerHTML=`<div class="empty"><h3>Procure em todo o caderno</h3>
+      <p>Escreva ao menos duas letras. A busca olha estudos, jóias, páginas, discursos,
+      assembleias, congressos, revisitas, projetos, cartões e as notas do relatório.</p></div>`; return; }
+  const alvo=semAcento(termo);
+  const achados=itensBusca().filter(i=>semAcento(i.titulo+' '+i.corpo).includes(alvo));
+  const porTipo=new Map();
+  achados.forEach(a=>porTipo.set(a.rot,(porTipo.get(a.rot)||0)+1));
+  if(chips) chips.innerHTML=`<button class="${bFiltro==='__todos'?'on':''}" data-t="__todos"
+      onclick="filtrarBusca(this.dataset.t)">Tudo · ${achados.length}</button>`+
+    [...porTipo.entries()].map(([rot,n])=>`<button class="${bFiltro===rot?'on':''}" data-t="${esc(rot)}"
+      onclick="filtrarBusca(this.dataset.t)">${esc(rot)} · ${n}</button>`).join('');
+  const lista=bFiltro==='__todos'?achados:achados.filter(a=>a.rot===bFiltro);
+  if(!lista.length){
+    el.innerHTML=`<div class="empty"><h3>Nada encontrado</h3>
+      <p>Nenhum registro tem “${esc(termo)}”. Tente outra palavra ou um pedaço menor dela.</p></div>`; return; }
+  el.innerHTML=lista.sort((a,b)=>(b.data||'').localeCompare(a.data||'')).map(a=>`
+    <article class="card teal" onclick="${a.acao}">
+      <div class="meta"><span class="chip-date t">${a.data?dataBR(a.data):'Sem data'}</span>
+        <span class="tag">${a.rot}</span></div>
+      <h3>${realce(a.titulo,termo)}</h3>
+      <p class="excerpt">${realce(a.corpo,termo)}</p></article>`).join('');
+}
+function filtrarBusca(t){ bFiltro=t; renderBusca(); }
+
+/* ============================================================
+   INÍCIO — o acervo
+   ============================================================ */
+function renderInicio(){
+  const av=$('inicioAvisos'), gr=$('inicioGrade'); if(!gr) return;
+  const ultima=lista=>{ const d=lista.filter(x=>!x.del).map(x=>x.data||'').filter(Boolean).sort(); 
+    return d.length?'último em '+dataBR(d[d.length-1]):'nada ainda'; };
+  const vencidas=revisitasVencidas().length;
+  const totalMes=minutosDoMes(mesAtual);
+  const metaCod=config().meta||'';
+  const meta=(METAS.find(m=>m[0]===metaCod)||['','',0])[2];
+  const pctMeta=meta?Math.min(100,Math.round(totalMes/(meta*60)*100)):0;
+  const cards=quadro.listas?quadro.listas.reduce((t,l)=>t+(l.cards||[]).length,0):0;
+  const livrosUsados=new Set(joias.filter(j=>!j.del).map(j=>livroDaJoia(j)).filter(Boolean)).size;
+
+  if(av) av.innerHTML = vencidas
+    ? `<div class="aviso"><h4>${vencidas} revisita${vencidas>1?'s':''} esperando você</h4>
+        <p>A data de retorno já passou ou é hoje. Vale dar um retorno antes que esfrie.</p>
+        <button class="btn btn-rose btn-sm" onclick="go('revisitas')">Ver quem está esperando</button></div>`
+    : '';
+
+  const pecas=[
+    ['Estudo Pessoal',estudos.filter(x=>!x.del).length,ultima(estudos),"go('estudo')",0],
+    ['Jóias Espirituais',joias.filter(x=>!x.del).length,livrosUsados?livrosUsados+' livro(s) da Bíblia':'nada ainda',"go('joias')",0],
+    ['Caderno Livre',paginas.filter(x=>!x.del).length,ultima(paginas),"go('livre')",0],
+    ['Discurso Público',discursos.filter(x=>!x.del).length,ultima(discursos),"go('discursos')",0],
+    ['Relatório de Campo',fmtCurto(totalMes),meta?`meta de ${meta} h · ${pctMeta}%`:'sem meta escolhida',"go('relatorio')",0],
+    ['Revisitas',revisitas.filter(x=>!x.del).length,vencidas?vencidas+' esperando retorno':'tudo em dia',"go('revisitas')",vencidas],
+    ['Assembleias',assembleias.filter(x=>!x.del).length,ultima(assembleias),"go('assembleias')",0],
+    ['Congressos',congressos.filter(x=>!x.del).length,ultima(congressos),"go('congressos')",0],
+    ['Organização',cards,(quadro.listas||[]).length+' lista(s)',"go('org')",0],
+    ['Planner',projetos.filter(x=>!x.del).length,'projetos em andamento',"go('planner')",0]
+  ];
+  gr.innerHTML=pecas.map(([rot,n,sub,acao,selo])=>`
+    <button class="peca" onclick="${acao}">
+      ${selo?`<span class="selo">${selo}</span>`:''}
+      <span class="rot">${rot}</span><span class="n">${n}</span><span class="sub">${sub}</span></button>`).join('');
+}
+
+/* ============================================================
+   MENU — contagem ao lado de cada seção
+   ============================================================ */
+function renderMenuContagens(){
+  const n={
+    estudo:estudos.filter(x=>!x.del).length,
+    livre:paginas.filter(x=>!x.del).length,
+    joias:joias.filter(x=>!x.del).length,
+    discursos:discursos.filter(x=>!x.del).length,
+    assembleias:assembleias.filter(x=>!x.del).length,
+    congressos:congressos.filter(x=>!x.del).length,
+    org:(quadro.listas||[]).reduce((t,l)=>t+(l.cards||[]).length,0),
+    planner:projetos.filter(x=>!x.del).length,
+    relatorio:fmtCurto(minutosDoMes(mesAtual)),
+    revisitas:revisitas.filter(x=>!x.del).length,
+    etiquetas:todasEtiquetas().length,
+    lixeira:itensLixeira().length
+  };
+  const vencidas=revisitasVencidas().length;
+  document.querySelectorAll('.side .nav button[data-a]').forEach(b=>{
+    const a=b.dataset.a; if(!(a in n)) return;
+    let el=b.querySelector('.ct');
+    if(!el){ el=document.createElement('span'); el.className='ct'; b.appendChild(el); }
+    el.textContent=n[a]||(a==='relatorio'?'0h':'—');
+    el.classList.toggle('alerta',a==='revisitas'&&vencidas>0);
+    if(a==='revisitas'&&vencidas) el.textContent=vencidas+' hoje';
+    if(a==='lixeira'&&!n.lixeira) el.textContent='vazia';
+  });
+}
+
+/* ============================================================
+   LIXEIRA — 30 dias
+   ============================================================ */
+const DIAS_LIXEIRA=30;
+const TIPOS_LIXO=[
+  ['estudos','Estudo pessoal',()=>estudos,v=>estudos=v,o=>o.titulo],
+  ['joias','Jóia espiritual',()=>joias,v=>joias=v,o=>o.tema],
+  ['paginas','Página',()=>paginas,v=>paginas=v,o=>o.titulo],
+  ['discursos','Discurso público',()=>discursos,v=>discursos=v,o=>o.tema],
+  ['revisitas','Revisita',()=>revisitas,v=>revisitas=v,o=>o.nome],
+  ['projetos','Projeto',()=>projetos,v=>projetos=v,o=>o.nome],
+  ['assembleias','Assembleia',()=>assembleias,v=>assembleias=v,o=>o.nome],
+  ['congressos','Congresso',()=>congressos,v=>congressos=v,o=>o.nome]
+];
+function paraLixeira(o){ return {...o,del:true,delEm:Date.now(),updatedAt:Date.now()}; }
+const noPrazo=o=>o.delEm&&(Date.now()-o.delEm)<DIAS_LIXEIRA*86400000;
+function itensLixeira(){
+  const out=[];
+  TIPOS_LIXO.forEach(([chave,rot,pegar,,titulo])=>pegar().filter(o=>o.del&&noPrazo(o))
+    .forEach(o=>out.push({chave,rot,id:o.id,titulo:titulo(o)||'Sem título',
+      quando:o.delEm,restam:DIAS_LIXEIRA-Math.floor((Date.now()-o.delEm)/86400000)})));
+  return out.sort((a,b)=>b.quando-a.quando);
+}
+async function purgarLixeira(){
+  let mexeu=false;
+  for(const [chave,,pegar,por] of TIPOS_LIXO){
+    const lista=pegar();
+    const limpa=lista.map(o=>(o.del&&o.delEm&&!noPrazo(o))?{id:o.id,del:true,updatedAt:o.updatedAt||Date.now()}:o);
+    if(JSON.stringify(limpa)!==JSON.stringify(lista)){ por(limpa); await Store.set(K[chave],limpa); mexeu=true; }
+  }
+  return mexeu;
+}
+function renderLixeira(){
+  const el=$('listLixo'), info=$('lixoInfo'); if(!el) return;
+  const itens=itensLixeira();
+  if(info) info.textContent=itens.length
+    ? `${itens.length} registro(s) guardado(s). Some sozinho depois de ${DIAS_LIXEIRA} dias.`
+    : 'Nada aqui. O que você excluir fica guardado por 30 dias antes de sumir.';
+  if(!itens.length){
+    el.innerHTML=`<div class="empty"><h3>Lixeira vazia</h3>
+      <p>Excluiu sem querer? Volte aqui: dá tempo de restaurar por 30 dias.</p></div>`; return; }
+  el.innerHTML=itens.map(i=>`<article class="card">
+    <div class="meta"><span class="chip-date">${i.rot}</span>
+      <span class="tag">restam ${i.restam} dia(s)</span></div>
+    <h3>${esc(i.titulo)}</h3>
+    <div class="acoes-mini">
+      <button class="pri" onclick="restaurarLixo('${i.chave}','${i.id}')">Restaurar</button>
+      <button onclick="apagarDeVez('${i.chave}','${i.id}')">Excluir de vez</button>
+    </div></article>`).join('');
+}
+function tipoLixo(chave){ return TIPOS_LIXO.find(t=>t[0]===chave); }
+async function restaurarLixo(chave,id){
+  const t=tipoLixo(chave); if(!t) return;
+  const [, , pegar,por]=t;
+  const o=pegar().find(x=>x.id===id); if(!o) return;
+  const volta={...o,updatedAt:Date.now()}; delete volta.del; delete volta.delEm;
+  const lista=pegar().filter(x=>x.id!==id).concat(volta);
+  por(lista); await guardar(chave,lista); renderTudo(); toast('Registro restaurado.');
+}
+async function apagarDeVez(chave,id){
+  if(!confirm('Excluir de vez? Isso não volta mais.')) return;
+  const t=tipoLixo(chave); if(!t) return;
+  const [, , pegar,por]=t;
+  const lista=pegar().filter(x=>x.id!==id).concat({id,del:true,updatedAt:Date.now()});
+  por(lista); await guardar(chave,lista); renderLixeira(); renderMenuContagens(); toast('Excluído de vez.');
+}
+async function esvaziarLixeira(){
+  const itens=itensLixeira();
+  if(!itens.length){ toast('A lixeira já está vazia.'); return; }
+  if(!confirm(`Esvaziar a lixeira? ${itens.length} registro(s) somem para sempre.`)) return;
+  for(const [chave,,pegar,por] of TIPOS_LIXO){
+    const lista=pegar().map(o=>(o.del&&o.delEm)?{id:o.id,del:true,updatedAt:Date.now()}:o);
+    por(lista); await Store.set(K[chave],lista);
+  }
+  agendarSync(); renderLixeira(); renderMenuContagens(); toast('Lixeira esvaziada.');
+}
+
+/* ============================================================
+   MODO LEITURA
+   ============================================================ */
+function abrirLeitura(tipo,titulo,html){
+  $('ler_tipo').textContent=tipo; $('ler_ttl').textContent=titulo;
+  $('ler_corpo').innerHTML=html; abrir('sheetLer');
+}
+function lerEstudo(id){
+  const e=estudos.find(x=>x.id===(id||edEstudo)&&!x.del); if(!e){ toast('Salve o estudo primeiro.'); return; }
+  let h=`<p class="quando">${dataBR(e.data)||'Sem data'}${nomeCat(e.categoria)?' · '+esc(nomeCat(e.categoria)):''}</p>
+    <h1>${esc(e.titulo)||'Sem título'}</h1>`;
+  if(e.texto) h+=`<p class="corpo">${esc(e.texto)}</p>`;
+  if((e.textos||[]).length){ h+='<h4>Textos bíblicos</h4>';
+    e.textos.forEach(t=>h+=`<div class="bloco"><b>${esc(t.ref)}</b><span>${esc(t.nota)}</span></div>`); }
+  if((e.personagens||[]).length){ h+='<h4>Exemplos bíblicos</h4>';
+    e.personagens.forEach(p=>h+=`<div class="bloco"><b>${esc(p.nome)}</b><span>${esc(p.licoes)}</span></div>`); }
+  if((e.perguntas||[]).length){ h+='<h4>Perguntas de reflexão</h4>';
+    e.perguntas.forEach(p=>h+=`<div class="bloco"><b>${esc(p.pergunta)}</b><span>${esc(p.resposta)||'—'}</span></div>`); }
+  abrirLeitura('Estudo pessoal','Modo leitura',h);
+}
+function lerDiscurso(id){
+  const d=discursos.find(x=>x.id===(id||edDiscurso)&&!x.del); if(!d){ toast('Salve o discurso primeiro.'); return; }
+  let h=`<p class="quando">${dataBR(d.data)||'Sem data'}</p><h1>${esc(d.tema)||'Sem tema'}</h1>`;
+  const quem=[d.orador,d.cong].filter(Boolean).map(esc).join(' · ');
+  if(quem) h+=`<p class="autor">${quem}</p>`;
+  if(d.texto) h+=`<p class="corpo">${esc(d.texto)}</p>`;
+  abrirLeitura('Discurso público','Modo leitura',h);
+}
+
+/* ============================================================
+   MENSAGEM DO MÊS
+   ============================================================ */
+const K_NOME='at_nome_relatorio';
+function abrirMes(){
+  try{ $('m_nome').value=localStorage.getItem(K_NOME)||''; }catch(e){}
+  $('m_obs').value='';
+  const [a,m]=mesAtual.split('-').map(Number);
+  $('hMes').textContent=new Date(a,m-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  montarMes(); abrir('sheetMes');
+}
+function textoDoMes(){
+  const [a,m]=mesAtual.split('-').map(Number);
+  const rotulo=new Date(a,m-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  const total=minutosDoMes(mesAtual), qtd=estudosDoMes(mesAtual);
+  const nome=($('m_nome')?$('m_nome').value.trim():'');
+  const obs=($('m_obs')?$('m_obs').value.trim():'');
+  const metaCod=config().meta||'';
+  const meta=(METAS.find(x=>x[0]===metaCod)||['','',0]);
+  const linhas=[`*Relatório de campo — ${rotulo}*`];
+  if(nome) linhas.push(nome);
+  linhas.push('');
+  linhas.push('Participei no ministério: '+(total>0?'sim':'não'));
+  if(total>0) linhas.push('Horas: '+fmtCurto(total));
+  if(qtd) linhas.push('Estudos bíblicos: '+qtd);
+  if(meta[2]) linhas.push('Meta: '+meta[1]+(total>=meta[2]*60?' — alcançada':` — faltam ${fmtCurto(meta[2]*60-total)}`));
+  if(obs){ linhas.push(''); linhas.push('Observação: '+obs); }
+  return linhas.join('\n');
+}
+function montarMes(){
+  const el=$('m_previa'); if(el) el.textContent=textoDoMes();
+  try{ localStorage.setItem(K_NOME,$('m_nome').value.trim()); }catch(e){}
+}
+function copiarMes(){
+  const t=textoDoMes();
+  const guardado=()=>toast('Mensagem copiada.');
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(guardado,()=>copiaAntiga(t));
+  } else copiaAntiga(t);
+}
+function copiaAntiga(t){
+  const ta=document.createElement('textarea'); ta.value=t;
+  ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta);
+  ta.select(); try{ document.execCommand('copy'); toast('Mensagem copiada.'); }
+  catch(e){ toast('Não deu para copiar. Selecione o texto na tela.'); }
+  ta.remove();
+}
+function enviarMes(){ window.open('https://wa.me/?text='+encodeURIComponent(textoDoMes()),'_blank'); }
+
+/* ============================================================
+   GRÁFICO DO ANO DE SERVIÇO
+   ============================================================ */
+function graficoAno(){
+  const el=$('rc_graf'); if(!el) return;
+  const {inicio,rotulo}=anoDeServico(mesAtual);
+  const meses=[];
+  for(let i=0;i<12;i++){
+    const d=new Date(inicio,8+i,1);
+    const chave=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    meses.push([chave,d.toLocaleDateString('pt-BR',{month:'short'}).replace('.',''),minutosDoMes(chave)]);
+  }
+  const maior=Math.max(60,...meses.map(m=>m[2]));
+  el.innerHTML=meses.map(([chave,rot,min])=>{
+    const alt=Math.round(min/maior*100);
+    return `<button class="col ${chave===mesAtual?'atual':''}" onclick="irParaMes('${chave}')" title="${fmt(min)}">
+      <span class="valor">${min?fmtCurto(min):''}</span>
+      <i style="height:${Math.max(min?6:2,alt)}%"></i>
+      <span class="mes">${rot}</span></button>`;
+  }).join('');
+  const total=minutosDoAno(mesAtual);
+  const t=$('rc_grafTotal'); if(t) t.textContent=fmt(total);
+  const r=$('rc_grafRotulo'); if(r) r.textContent=rotulo;
+}
+function irParaMes(chave){ mesAtual=chave; renderRelatorio(); }
+
+/* ============================================================
+   NUVEM — o que ainda não subiu
+   ============================================================ */
+const ROTULO_TABELA={estudos:'Estudos',categorias:'Categorias',joias:'Jóias',projetos:'Projetos',
+  assembleias:'Assembleias',congressos:'Congressos',revisitas:'Revisitas',paginas:'Páginas',
+  discursos:'Discursos',relatorio:'Relatório de campo',quadro:'Organização'};
+function renderPendencias(){
+  const el=$('n_pend'); if(!el) return;
+  if(!Nuvem.url){ el.innerHTML=''; return; }
+  const fila=Nuvem.fila();
+  const linhas=Object.keys(ROTULO_TABELA).map(t=>[ROTULO_TABELA[t],(fila[t]||[]).length]);
+  const faltando=linhas.reduce((a,[,n])=>a+n,0);
+  el.innerHTML=linhas.filter(([,n])=>n>0).map(([rot,n])=>
+      `<div><span>${rot}</span><b class="esperando">${n} esperando</b></div>`).join('')+
+    (faltando?'':`<div><span>Tudo enviado</span><b class="ok">em dia</b></div>`);
+}
+
+/* ============================================================
+   AVISO DAS REVISITAS
+   ============================================================ */
+function avisarRevisitas(){
+  const v=revisitasVencidas();
+  if(!v.length) return;
+  const nomes=v.slice(0,3).map(r=>r.nome||'sem nome').join(', ');
+  setTimeout(()=>toast(`${v.length} revisita(s) esperando retorno: ${nomes}.`),1200);
+  try{
+    if(window.Notification && Notification.permission==='granted'){
+      new Notification('Revisitas esperando',{body:`${v.length} para retornar: ${nomes}`,tag:'revisitas'});
+    }
+  }catch(e){}
+}
+function pedirAvisos(){
+  if(!window.Notification){ toast('Este aparelho não avisa por notificação.'); return; }
+  Notification.requestPermission().then(p=>toast(p==='granted'
+    ? 'Pronto: o caderno vai avisar quando uma revisita vencer.'
+    : 'Sem problema — o aviso continua aparecendo dentro do app.'));
+}
+
 /* ============================================================
    INÍCIO
    ============================================================ */
@@ -2201,10 +3177,19 @@ $('fileImp').addEventListener('change',async ev=>{
   montarNav();
   aplicarVisual();
   await carregar();
-  let inicial='estudo';
+  let inicial='inicio';
   try{ const s=localStorage.getItem('at_aba'); if(s&&ABAS.some(([id])=>id===s)) inicial=s; }catch(e){}
+  /* atalhos do ícone do app: index.html?ir=joias&novo=1 */
+  const par=new URLSearchParams(location.search);
+  const ir=par.get('ir');
+  if(ir&&ABAS.some(([id])=>id===ir)) inicial=ir;
   go(inicial);
+  if(ir==='joias'&&par.get('novo')) abrirJoia();
+  if(ir==='relatorio'&&par.get('hoje')) abrirDia(hoje());
+  if(ir||par.get('novo')) history.replaceState(null,'',location.pathname);
   if(Nuvem.url){ statusNuvem('Conectado'); sincronizar(true); } else statusNuvem('Sem nuvem');
+  renderPendencias();
+  avisarRevisitas();
   setInterval(()=>{ if(!document.querySelector('.sheet-bg.on')) sincronizar(true); },90000);
   window.addEventListener('online',()=>sincronizar(true));
   document.addEventListener('visibilitychange',()=>{ if(!document.hidden) sincronizar(true); });
@@ -2270,6 +3255,10 @@ $('fileImp').addEventListener('change',async ev=>{
 </script><script>
 (function(){
   var ICO={
+    inicio:'M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z',
+    etiquetas:'M4 4.5h7l8.5 8.5-6.5 6.5L4.5 11z|C8.5,9,1.4',
+    lixeira:'M5 7h14|M9 7V5h6v2|M6.5 7l1 12.5h9L18 7',
+    busca:'C11,11,6|M15.5 15.5 20 20',
     estudo:'M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z',
     livre:'M4 5.5A2 2 0 0 1 6 4h13v14H6a2 2 0 0 0-2 2z|M8 4v16',
     joias:'M12 3l2.2 5.1 5.3.5-4 3.6 1.2 5.3L12 14.8 7.3 17.5l1.2-5.3-4-3.6 5.3-.5z',
