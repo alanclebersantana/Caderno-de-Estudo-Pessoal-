@@ -1,4 +1,5 @@
 {
+  "id": "/Caderno-de-Estudo-Pessoal-/",
   "name": "Caderno — Meu Estudo Pessoal",
   "short_name": "Caderno",
   "description": "Estudo pessoal, caderno livre, jóias espirituais, discursos, organização, planner, assembleias, congressos, relatório de campo e revisitas.",
@@ -27,6 +28,41 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nova jóia espiritual",
+      "short_name": "Nova jóia",
+      "url": "index.html?ir=joias&novo=1",
+      "icons": [
+        {
+          "src": "icone-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Lançar horas de hoje",
+      "short_name": "Lançar horas",
+      "url": "index.html?ir=relatorio&hoje=1",
+      "icons": [
+        {
+          "src": "icone-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Buscar no caderno",
+      "short_name": "Buscar",
+      "url": "index.html?ir=busca",
+      "icons": [
+        {
+          "src": "icone-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }

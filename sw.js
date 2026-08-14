@@ -1,5 +1,6 @@
-/* Caderno da Átina — funciona mesmo sem internet */
-const CACHE = 'caderno-atina-v2';
+/* Caderno — Meu Estudo Pessoal
+   v3: o index vai primeiro à rede, para o app instalado receber as atualizações */
+const CACHE = 'caderno-v3';
 const ARQUIVOS = ['./', './index.html', './manifest.json', './icone-192.png', './icone-512.png'];
 
 self.addEventListener('install', ev => {
@@ -13,11 +14,31 @@ self.addEventListener('activate', ev => {
   );
 });
 
+self.addEventListener('message', ev => { if (ev.data === 'atualizar') self.skipWaiting(); });
+
 self.addEventListener('fetch', ev => {
   const url = new URL(ev.request.url);
+  if (ev.request.method !== 'GET') return;
   // a nuvem e as fontes sempre vão à rede
   if (url.hostname.indexOf('google') >= 0 || url.hostname.indexOf('gstatic') >= 0) return;
-  if (ev.request.method !== 'GET') return;
+
+  const ehPagina = ev.request.mode === 'navigate' ||
+                   /\/(index\.html|manifest\.json)$/.test(url.pathname) ||
+                   url.pathname.endsWith('/');
+
+  if (ehPagina) {
+    // rede primeiro: abre sempre a versão mais nova, e o cache cobre o offline
+    ev.respondWith(
+      fetch(ev.request).then(net => {
+        if (net.ok && url.origin === location.origin) {
+          const copia = net.clone();
+          caches.open(CACHE).then(c => c.put(ev.request, copia));
+        }
+        return net;
+      }).catch(() => caches.match(ev.request).then(r => r || caches.match('./index.html')))
+    );
+    return;
+  }
 
   ev.respondWith(
     caches.match(ev.request).then(resp => resp || fetch(ev.request).then(net => {

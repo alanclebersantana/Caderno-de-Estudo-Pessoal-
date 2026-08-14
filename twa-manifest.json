@@ -1,0 +1,51 @@
+{
+  "packageId": "io.github.alanclebersantana.caderno",
+  "host": "alanclebersantana.github.io",
+  "name": "Caderno — Meu Estudo Pessoal",
+  "launcherName": "Caderno",
+  "display": "standalone",
+  "orientation": "portrait",
+  "themeColor": "#FBE9EF",
+  "themeColorDark": "#2A1E25",
+  "navigationColor": "#FBE9EF",
+  "navigationColorDark": "#2A1E25",
+  "navigationDividerColor": "#FBE9EF",
+  "navigationDividerColorDark": "#2A1E25",
+  "backgroundColor": "#FDF7F4",
+  "enableNotifications": true,
+  "startUrl": "/Caderno-de-Estudo-Pessoal-/index.html",
+  "iconUrl": "https://alanclebersantana.github.io/Caderno-de-Estudo-Pessoal-/icone-512.png",
+  "maskableIconUrl": "https://alanclebersantana.github.io/Caderno-de-Estudo-Pessoal-/icone-512.png",
+  "webManifestUrl": "https://alanclebersantana.github.io/Caderno-de-Estudo-Pessoal-/manifest.json",
+  "appVersionName": "3.0.0",
+  "appVersionCode": 30,
+  "shortcuts": [
+    {
+      "name": "Nova jóia espiritual",
+      "shortName": "Nova jóia",
+      "url": "/Caderno-de-Estudo-Pessoal-/index.html?ir=joias&novo=1",
+      "chosenIconUrl": "https://alanclebersantana.github.io/Caderno-de-Estudo-Pessoal-/icone-192.png"
+    },
+    {
+      "name": "Lançar horas de hoje",
+      "shortName": "Lançar horas",
+      "url": "/Caderno-de-Estudo-Pessoal-/index.html?ir=relatorio&hoje=1",
+      "chosenIconUrl": "https://alanclebersantana.github.io/Caderno-de-Estudo-Pessoal-/icone-192.png"
+    },
+    {
+      "name": "Buscar no caderno",
+      "shortName": "Buscar",
+      "url": "/Caderno-de-Estudo-Pessoal-/index.html?ir=busca",
+      "chosenIconUrl": "https://alanclebersantana.github.io/Caderno-de-Estudo-Pessoal-/icone-192.png"
+    }
+  ],
+  "signingKey": { "path": "./android.keystore", "alias": "caderno" },
+  "fallbackType": "customtabs",
+  "features": {},
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://alanclebersantana.github.io/Caderno-de-Estudo-Pessoal-/",
+  "minSdkVersion": 21,
+  "splashScreenFadeOutDuration": 300,
+  "generatorApp": "bubblewrap-cli"
+}
