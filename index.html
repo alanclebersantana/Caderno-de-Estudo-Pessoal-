@@ -281,6 +281,9 @@ button{cursor:pointer;border:none;background:none;padding:0}
 .contador button:hover{border-color:var(--rose);background:var(--blush)}
 .contador input{width:72px;text-align:center;font-weight:700}
 .metabox select{flex:1;min-width:200px}
+#rc_creditos{display:none;margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}
+#rc_creditos.on{display:block}
+.credito-inline{font-family:var(--sans);font-size:14px;font-weight:700;color:var(--teal-deep)}
 .pag{min-height:calc(var(--lh)*14)}
 .opcoes{display:flex;gap:10px;flex-wrap:wrap}
 .opcao{flex:1;min-width:140px;border:1.5px solid var(--line);border-radius:16px;padding:14px;background:var(--paper);text-align:left}
@@ -875,6 +878,29 @@ body{font-size:calc(16px * var(--esc))}
               <p class="hintline" style="margin-top:6px">Quantos estudos diferentes você dirigiu neste mês.</p>
             </div>
           </div>
+          <div id="rc_creditos">
+            <span class="kicker">Créditos e abonos</span>
+            <div class="metabox" style="margin-top:8px">
+              <div style="flex:1;min-width:200px"><label class="lbl">Categoria</label>
+                <select class="inp" id="rc_credCategoria" onchange="mudarCategoriaCredito()">
+                  <option value="escola">Escola</option>
+                  <option value="ldc">LDC</option>
+                  <option value="outro">Personalizada</option>
+                </select>
+              </div>
+              <div id="rc_credNomeBox" style="flex:1;min-width:200px;display:none">
+                <label class="lbl">Nome da categoria</label>
+                <input class="inp" id="rc_credNome" placeholder="Ex.: Construção" onchange="salvarNomeCredito()">
+              </div>
+            </div>
+            <div class="row2" style="margin-top:10px">
+              <div class="field" style="margin:0"><label class="lbl">Horas</label>
+                <input class="inp" type="number" inputmode="numeric" min="0" max="999" id="rc_credH" placeholder="0" onchange="salvarCredito()"></div>
+              <div class="field" style="margin:0"><label class="lbl">Minutos</label>
+                <input class="inp" type="number" inputmode="numeric" min="0" max="59" step="5" id="rc_credM" placeholder="0" onchange="salvarCredito()"></div>
+            </div>
+            <p class="hintline" style="margin-top:6px">Não entram no total do mês — aparecem entre parênteses ao lado dele. As horas lançadas nos dias somam aqui automaticamente.</p>
+          </div>
         </div>
         <button class="btn btn-soft btn-sm" style="width:100%;margin-bottom:16px" onclick="abrirMes()">
           Gerar mensagem do mês</button>
@@ -1224,6 +1250,12 @@ body{font-size:calc(16px * var(--esc))}
         <input class="inp" type="number" inputmode="numeric" min="0" max="24" id="d_horas" placeholder="0"></div>
       <div class="field"><label class="lbl">Minutos</label>
         <input class="inp" type="number" inputmode="numeric" min="0" max="59" step="5" id="d_min" placeholder="0"></div>
+    </div>
+    <div class="row2" id="d_credBox" style="display:none">
+      <div class="field"><label class="lbl">Créditos/abonos (horas)</label>
+        <input class="inp" type="number" inputmode="numeric" min="0" max="24" id="d_credH" placeholder="0"></div>
+      <div class="field"><label class="lbl">Créditos/abonos (min)</label>
+        <input class="inp" type="number" inputmode="numeric" min="0" max="59" step="5" id="d_credM" placeholder="0"></div>
     </div>
     <div class="field" style="margin:0"><label class="lbl">Observação (opcional)</label>
       <textarea class="ta sm" id="d_nota" placeholder="Território, com quem saiu, revisitas feitas…"></textarea></div>
@@ -2283,6 +2315,20 @@ const minDoDia=iso=>{ const r=relatorio.find(x=>x.id===idDia(iso)&&!x.del); retu
 const config=()=>relatorio.find(x=>x.id==='config'&&!x.del)||{id:'config',meta:''};
 const idEstudos=mes=>'est_'+mes;
 const estudosDoMes=mes=>{ const r=relatorio.find(x=>x.id===idEstudos(mes)&&!x.del); return r?Number(r.quantidade)||0:0; };
+const idCredMes=mes=>'cred_'+mes;
+const credManualDoMes=mes=>{ const r=relatorio.find(x=>x.id===idCredMes(mes)&&!x.del); return r?Number(r.minutos)||0:0; };
+function creditoDiasDoMes(mes){
+  return relatorio.filter(r=>!r.del&&r.id.startsWith('d_')&&(r.data||'').slice(0,7)===mes)
+                  .reduce((t,r)=>t+(Number(r.credito)||0),0);
+}
+function creditoTotalDoMes(mes){ return credManualDoMes(mes)+creditoDiasDoMes(mes); }
+function metaTemCredito(metaCod){ return metaCod==='regular'||metaCod==='especial'; }
+function nomeCategoriaCredito(){
+  const c=config();
+  if(c.credCategoria==='ldc') return 'LDC';
+  if(c.credCategoria==='outro') return (c.credNome||'').trim()||'Personalizada';
+  return 'Escola';
+}
 function fmt(min){
   const h=Math.floor(min/60), m=min%60;
   if(!min) return '0 h';
@@ -2323,8 +2369,22 @@ function renderRelatorio(){
   $('rc_grade').innerHTML=cel;
 
   const total=minutosDoMes(mesAtual);
-  $('rc_total').textContent=fmt(total);
   const metaCod=config().meta||'';
+  const credOn=metaTemCredito(metaCod);
+  const credTotal=creditoTotalDoMes(mesAtual);
+  $('rc_total').innerHTML=fmt(total)+(credOn&&credTotal>0
+    ?` <span class="credito-inline">(+${fmtCurto(credTotal)} ${esc(nomeCategoriaCredito())})</span>`:'');
+  const caixaCred=$('rc_creditos');
+  if(caixaCred) caixaCred.classList.toggle('on',credOn);
+  if(credOn){
+    const cfg=config();
+    const selCred=$('rc_credCategoria'); if(selCred) selCred.value=cfg.credCategoria||'escola';
+    const nomeBox=$('rc_credNomeBox'); if(nomeBox) nomeBox.style.display=(cfg.credCategoria==='outro')?'':'none';
+    const nomeInp=$('rc_credNome'); if(nomeInp) nomeInp.value=cfg.credNome||'';
+    const ch=$('rc_credH'), cm=$('rc_credM');
+    if(ch) ch.value=credTotal?Math.floor(credTotal/60):'';
+    if(cm) cm.value=credTotal%60?credTotal%60:'';
+  }
   const meta=(METAS.find(m=>m[0]===metaCod)||['','',0])[2];
   const alvo=meta*60;
   const pct=alvo?Math.min(100,Math.round(total*100/alvo)):0;
@@ -2398,10 +2458,15 @@ function abrirDia(iso){
   diaAberto=iso;
   const r=relatorio.find(x=>x.id===idDia(iso)&&!x.del);
   const min=r?Number(r.minutos)||0:0;
+  const cred=r?Number(r.credito)||0:0;
   $('hDia').textContent=dataBR(iso);
   $('d_horas').value=min?Math.floor(min/60):'';
   $('d_min').value=min%60?min%60:'';
   $('d_nota').value=r?r.nota||'':'';
+  const credOn=metaTemCredito(config().meta||'');
+  const box=$('d_credBox'); if(box) box.style.display=credOn?'':'none';
+  if($('d_credH')) $('d_credH').value=(credOn&&cred)?Math.floor(cred/60):'';
+  if($('d_credM')) $('d_credM').value=(credOn&&cred%60)?cred%60:'';
   abrir('sheetDia');
   setTimeout(()=>$('d_horas').focus(),200);
 }
@@ -2410,10 +2475,18 @@ async function salvarDia(){
   const h=Math.max(0,Number($('d_horas').value)||0);
   const m=Math.max(0,Number($('d_min').value)||0);
   const minutos=h*60+m;
-  const obj={id:idDia(diaAberto),data:diaAberto,minutos,nota:val('d_nota'),updatedAt:Date.now()};
-  relatorio=relatorio.filter(x=>x.id!==obj.id).concat(minutos||obj.nota?obj:{...obj,del:true});
+  const credOn=metaTemCredito(config().meta||'');
+  let credito=0;
+  if(credOn){
+    const ch=Math.max(0,Number($('d_credH').value)||0);
+    const cm=Math.max(0,Number($('d_credM').value)||0);
+    credito=ch*60+cm;
+  }
+  const obj={id:idDia(diaAberto),data:diaAberto,minutos,credito,nota:val('d_nota'),updatedAt:Date.now()};
+  relatorio=relatorio.filter(x=>x.id!==obj.id).concat(minutos||credito||obj.nota?obj:{...obj,del:true});
   await guardar('relatorio',relatorio); renderRelatorio();
-  fechar('sheetDia'); toast(minutos?`${fmt(minutos)} lançado em ${dataBR(diaAberto)}.`:'Dia sem horas.');
+  fechar('sheetDia');
+  toast(minutos?`${fmt(minutos)} lançado em ${dataBR(diaAberto)}.`:(credito?`${fmt(credito)} de crédito lançado em ${dataBR(diaAberto)}.`:'Dia sem horas.'));
 }
 async function limparDia(){
   if(!diaAberto) return;
@@ -2433,12 +2506,37 @@ function mudarEstudos(passo){
   $('rc_estudos').value=Math.max(0,Math.min(99,atual+passo));
   salvarEstudosMes();
 }
+async function atualizarConfig(patch){
+  const atual=config();
+  const novo={id:'config',meta:atual.meta||'',credCategoria:atual.credCategoria||'escola',
+              credNome:atual.credNome||'',...patch,updatedAt:Date.now()};
+  relatorio=relatorio.filter(x=>x.id!=='config').concat(novo);
+  await guardar('relatorio',relatorio); renderRelatorio();
+}
 async function salvarMeta(){
   const meta=$('rc_meta').value;
-  relatorio=relatorio.filter(x=>x.id!=='config').concat({id:'config',meta,updatedAt:Date.now()});
-  await guardar('relatorio',relatorio); renderRelatorio();
+  await atualizarConfig({meta});
   const nome=(METAS.find(m=>m[0]===meta)||['','Sem meta'])[1];
   toast(meta?('Meta ativa: '+nome):'Meta desligada.');
+}
+async function mudarCategoriaCredito(){
+  const cat=$('rc_credCategoria').value;
+  const nomeBox=$('rc_credNomeBox'); if(nomeBox) nomeBox.style.display=(cat==='outro')?'':'none';
+  await atualizarConfig({credCategoria:cat});
+}
+async function salvarNomeCredito(){
+  await atualizarConfig({credNome:val('rc_credNome')});
+}
+async function salvarCredito(){
+  const h=Math.max(0,Number($('rc_credH').value)||0);
+  const m=Math.max(0,Number($('rc_credM').value)||0);
+  const totalDigitado=h*60+m;
+  const diasJa=creditoDiasDoMes(mesAtual);
+  const manual=Math.max(0,totalDigitado-diasJa);
+  relatorio=relatorio.filter(x=>x.id!==idCredMes(mesAtual))
+    .concat(manual?{id:idCredMes(mesAtual),mes:mesAtual,minutos:manual,updatedAt:Date.now()}
+             :{id:idCredMes(mesAtual),del:true,updatedAt:Date.now()});
+  await guardar('relatorio',relatorio); renderRelatorio();
 }
 
 /* ============================================================
@@ -3076,11 +3174,12 @@ function textoDoMes(){
   const obs=($('m_obs')?$('m_obs').value.trim():'');
   const metaCod=config().meta||'';
   const meta=(METAS.find(x=>x[0]===metaCod)||['','',0]);
+  const credOn=metaTemCredito(metaCod), credTotal=creditoTotalDoMes(mesAtual);
   const linhas=[`*Relatório de campo — ${rotulo}*`];
   if(nome) linhas.push(nome);
   linhas.push('');
   linhas.push('Participei no ministério: '+(total>0?'sim':'não'));
-  if(total>0) linhas.push('Horas: '+fmtCurto(total));
+  if(total>0) linhas.push('Horas: '+fmtCurto(total)+(credOn&&credTotal>0?` (+${fmtCurto(credTotal)} ${nomeCategoriaCredito()})`:''));
   if(qtd) linhas.push('Estudos bíblicos: '+qtd);
   if(meta[2]) linhas.push('Meta: '+meta[1]+(total>=meta[2]*60?' — alcançada':` — faltam ${fmtCurto(meta[2]*60-total)}`));
   if(obs){ linhas.push(''); linhas.push('Observação: '+obs); }
