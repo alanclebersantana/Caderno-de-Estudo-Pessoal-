@@ -645,9 +645,58 @@ body{font-size:calc(16px * var(--esc))}
 .card.apagado h3{color:var(--muted)}
 .lixo-topo{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
 .lixo-topo p{margin:0;font-size:12.5px;color:var(--muted)}
+
+/* ================= LOGIN ================= */
+#authgate{position:fixed;inset:0;z-index:200;background:var(--bg1);display:flex;align-items:center;justify-content:center;padding:22px;overflow-y:auto}
+#authgate .authbox{width:100%;max-width:380px;background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:26px 22px;box-shadow:0 24px 48px -28px rgba(0,0,0,.35);text-align:center}
+#authgate h1{font-family:var(--script);color:var(--rose-ink);font-size:38px;margin:0 0 4px;font-weight:700}
+#authgate .segau{display:flex;gap:6px;margin:16px 0 18px}
+#authgate .segau button{flex:1;padding:11px 4px;font-size:13px;font-weight:700;background:var(--blush);color:var(--rose-ink);border:1px solid var(--blush-3);border-radius:12px}
+#authgate .segau button.on{background:var(--rose);color:#fff;border-color:var(--rose)}
+#authgate .field{text-align:left}
+#authErr{font-size:12.5px;margin:6px 0 4px;display:none;line-height:1.4;color:var(--danger)}
+#authgate .btn{width:100%;margin-top:10px}
+#appRoot.hide{display:none}
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
+
+<!-- ---------- entrada / login ---------- -->
+<div id="authgate">
+  <div class="authbox">
+    <h1>Caderno</h1>
+    <p class="hintline" style="text-align:center;margin:0">Entre para acessar e sincronizar suas anotações em qualquer aparelho.</p>
+
+    <div class="segau" id="authTabs">
+      <button type="button" class="on" data-t="in" onclick="setAuthMode('in')">Entrar</button>
+      <button type="button" data-t="up" onclick="setAuthMode('up')">Criar conta</button>
+    </div>
+
+    <div class="field"><label class="lbl">E-mail</label>
+      <input class="inp" id="authEmail" type="email" placeholder="seu@email.com" autocomplete="username"></div>
+    <div class="field" style="margin-bottom:6px"><label class="lbl">Senha</label>
+      <input class="inp" id="authPass" type="password" placeholder="Mínimo 6 caracteres" autocomplete="current-password"></div>
+
+    <p id="authErr"></p>
+
+    <button class="btn btn-rose" id="btnAuthSubmit" onclick="fazerAuth()">Entrar</button>
+    <button class="btn btn-soft" style="display:flex;align-items:center;justify-content:center;gap:8px" onclick="loginGoogle()">
+      <svg width="17" height="17" viewBox="0 0 48 48" style="flex:none">
+        <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.6 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.1 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/>
+        <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.1 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4c-7.5 0-14 4.2-17.7 10.7z"/>
+        <path fill="#4CAF50" d="M24 44c5.4 0 10.3-2.1 14-5.5l-6.5-5.4C29.4 34.9 26.8 36 24 36c-5.3 0-9.7-3.4-11.3-8.1l-6.6 5.1C9.9 39.6 16.4 44 24 44z"/>
+        <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.7l6.5 5.4C41.8 35.8 44 30.3 44 24c0-1.3-.1-2.7-.4-3.5z"/>
+      </svg>
+      Continuar com Google
+    </button>
+    <button class="btn btn-quiet" onclick="esqueciSenha()">Esqueci minha senha</button>
+  </div>
+</div>
+
+<div id="appRoot" class="hide">
 <div class="drawer-bg" id="drawerBg" onclick="fecharMenu()"></div>
 <aside class="side" id="drawer">
   <div class="capa">
@@ -741,9 +790,9 @@ body{font-size:calc(16px * var(--esc))}
       Ajustes
     </button>
 
-    <button onclick="fecharMenu();abrirNuvem()">
+    <button onclick="fecharMenu();abrirConta()">
       <svg viewBox="0 0 24 24"><path d="M17.5 18.5H7a4.5 4.5 0 0 1-.6-9A6 6 0 0 1 18 8.6a4.2 4.2 0 0 1-.5 9.9z"/></svg>
-      Nuvem
+      Conta e sincronização
     </button>
 
     <button onclick="exportar()">
@@ -1353,37 +1402,36 @@ body{font-size:calc(16px * var(--esc))}
       <p class="hint">Um lembrete quando a data de retorno chegar.</p></div></div>
       <button class="btn btn-soft btn-sm" style="width:100%" onclick="pedirAvisos()">Avisar no celular</button>
     </div>
-    <div class="sec"><div class="sec-top"><div><h4>Nuvem e cópias</h4>
-      <p class="hint">Sincronização entre o celular e o computador.</p></div></div>
-      <button class="btn btn-soft btn-sm" style="width:100%" onclick="fechar('sheetConfig');abrirNuvem()">Abrir a nuvem</button>
+    <div class="sec"><div class="sec-top"><div><h4>Conta e sincronização</h4>
+      <p class="hint">Seus dados sobem para sua conta e aparecem em qualquer aparelho.</p></div></div>
+      <button class="btn btn-soft btn-sm" style="width:100%" onclick="fechar('sheetConfig');abrirConta()">Abrir conta</button>
     </div>
   </div>
   <div class="sheet-foot"><button class="btn btn-quiet" onclick="fechar('sheetConfig')">Fechar</button></div>
 </div></div>
 
-<div class="sheet-bg" id="sheetNuvem"><div class="sheet small">
-  <div class="sheet-head"><div><span class="kicker">Sincronização</span><h3>Nuvem</h3></div>
-    <button class="x" onclick="fechar('sheetNuvem')">×</button></div>
+<div class="sheet-bg" id="sheetConta"><div class="sheet small">
+  <div class="sheet-head"><div><span class="kicker">Sincronização</span><h3>Conta</h3></div>
+    <button class="x" onclick="fechar('sheetConta')">×</button></div>
   <div class="sheet-body">
-    <div class="field"><label class="lbl">Endereço do app da web</label>
-      <input class="inp" id="n_url" placeholder="https://script.google.com/macros/s/…/exec">
-      <p class="hintline">Cole a mesma URL no celular e no computador. O caderno passa a abrir igual nos dois.</p></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn btn-rose btn-sm" style="flex:1" onclick="conectarNuvem()">Conectar e sincronizar</button>
-      <button class="btn btn-soft btn-sm" style="flex:1" onclick="sincronizar(false)">Sincronizar agora</button>
-      <button class="btn btn-quiet btn-sm" onclick="desconectarNuvem()">Desconectar</button>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
+      <span id="acctAvatar" style="width:44px;height:44px;border-radius:50%;background:var(--blush);color:var(--rose-ink);display:grid;place-items:center;font-size:15px;font-weight:800;flex:none">—</span>
+      <span style="flex:1;min-width:0">
+        <span id="acctName" style="display:block;font-size:14.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">—</span>
+        <span id="acctEmail" style="display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">—</span>
+      </span>
     </div>
-    <button class="btn btn-line btn-sm" style="width:100%;margin-top:8px" onclick="testarNuvem()">Testar gravação</button>
-    <p class="hintline" id="n_info"></p>
-    <div class="pendlista" id="n_pend"></div>
+    <p class="hintline" id="acctInfo">Seus dados são salvos na sua conta e aparecem automaticamente em qualquer aparelho onde você entrar com o mesmo login.</p>
     <div class="sec"><div class="sec-top"><div><h4>Cópia em arquivo</h4>
-      <p class="hint">Serve como segurança extra, mesmo usando a nuvem.</p></div></div>
+      <p class="hint">Serve como segurança extra, além da sincronização.</p></div></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn btn-quiet btn-sm" style="flex:1" onclick="exportar()">Salvar cópia</button>
         <button class="btn btn-quiet btn-sm" style="flex:1" onclick="importar()">Restaurar cópia</button></div></div>
+    <button class="btn btn-danger" style="width:100%;margin-top:6px" onclick="sairConta()">Sair da conta</button>
   </div>
-  <div class="sheet-foot"><button class="btn btn-quiet" onclick="fechar('sheetNuvem')">Fechar</button></div>
+  <div class="sheet-foot"><button class="btn btn-quiet" onclick="fechar('sheetConta')">Fechar</button></div>
 </div></div>
+
 
 <div class="sheet-bg" id="sheetLer"><div class="sheet">
   <div class="sheet-head"><div><span class="kicker" id="ler_tipo">Leitura</span><h3 id="ler_ttl">Modo leitura</h3></div>
@@ -1414,6 +1462,7 @@ body{font-size:calc(16px * var(--esc))}
 
 <input type="file" id="fileImp" accept="application/json,.json" style="display:none">
 <div class="toast" id="toast"></div>
+</div>
 
 <script>
 /* ==================== ARMAZENAMENTO (3 camadas) ==================== */
@@ -1451,6 +1500,104 @@ const K={estudos:'at_estudos_v1',categorias:'at_categorias_v1',joias:'at_joias_v
          paginas:'at_paginas_v1',discursos:'at_discursos_v1',relatorio:'at_relatorio_v1',
          quadro:'at_quadro_v1',projetos:'at_projetos_v1',assembleias:'at_assembleias_v1',
          congressos:'at_congressos_v1',revisitas:'at_revisitas_v1'};
+
+/* ==================== LOGIN E CONTA (Firebase) ==================== */
+const firebaseConfig = {
+  apiKey: "AIzaSyBaV6MtnGA3O0MnAD2ahQtNrpdsrcLnS_Y",
+  authDomain: "nosso-territorio-d1b6b.firebaseapp.com",
+  projectId: "nosso-territorio-d1b6b",
+  storageBucket: "nosso-territorio-d1b6b.firebasestorage.app",
+  messagingSenderId: "702151659736",
+  appId: "1:702151659736:web:60683540519543d54207ad",
+  measurementId: "G-R3SBYD0R07"
+};
+if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const dbFS = firebase.firestore();
+try{ dbFS.enablePersistence({synchronizeTabs:true}); }catch(e){}
+
+let firebaseUser=null, fsUnsub=null, authMode='in';
+function setAuthMode(m){
+  authMode=m;
+  document.querySelectorAll('#authTabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===m));
+  document.getElementById('btnAuthSubmit').textContent = m==='in' ? 'Entrar' : 'Criar conta';
+  clearAuthErr();
+}
+function showAuthErr(msg,cor){ const e=$('authErr'); e.textContent=msg; e.style.display='block'; e.style.color=cor||'var(--danger)'; }
+function clearAuthErr(){ const e=$('authErr'); e.style.display='none'; e.textContent=''; }
+function authErrMsg(code){
+  const map={
+    'auth/invalid-email':'E-mail inválido.',
+    'auth/missing-password':'Informe a senha.',
+    'auth/weak-password':'A senha precisa ter pelo menos 6 caracteres.',
+    'auth/email-already-in-use':'Este e-mail já tem uma conta. Toque em "Entrar".',
+    'auth/invalid-credential':'E-mail ou senha incorretos.',
+    'auth/wrong-password':'E-mail ou senha incorretos.',
+    'auth/user-not-found':'Não encontramos uma conta com este e-mail.',
+    'auth/too-many-requests':'Muitas tentativas. Aguarde um pouco e tente de novo.',
+    'auth/popup-closed-by-user':'Login cancelado.',
+    'auth/network-request-failed':'Sem conexão com a internet.'
+  };
+  return map[code] || 'Não foi possível entrar. Tente novamente.';
+}
+async function fazerAuth(){
+  clearAuthErr();
+  const email=val('authEmail'), pass=$('authPass').value;
+  if(!email||!pass){ showAuthErr('Preencha e-mail e senha.'); return; }
+  const btn=$('btnAuthSubmit'); btn.disabled=true;
+  try{
+    if(authMode==='in') await auth.signInWithEmailAndPassword(email,pass);
+    else await auth.createUserWithEmailAndPassword(email,pass);
+  }catch(err){ showAuthErr(authErrMsg(err.code)); }
+  btn.disabled=false;
+}
+async function loginGoogle(){
+  clearAuthErr();
+  try{ await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+  catch(err){ showAuthErr(authErrMsg(err.code)); }
+}
+async function esqueciSenha(){
+  clearAuthErr();
+  const email=val('authEmail');
+  if(!email){ showAuthErr('Informe seu e-mail acima e toque de novo para receber o link de redefinição.'); return; }
+  try{ await auth.sendPasswordResetEmail(email); showAuthErr('E-mail de redefinição enviado. Verifique sua caixa de entrada.','var(--teal-deep)'); }
+  catch(err){ showAuthErr(authErrMsg(err.code)); }
+}
+async function sairConta(){
+  if(!confirm('Sair da sua conta neste aparelho?')) return;
+  try{ await auth.signOut(); }catch(e){}
+}
+function abrirConta(){
+  fillAccountInfo(firebaseUser);
+  abrir('sheetConta');
+}
+function fillAccountInfo(user){
+  if(!user) return;
+  const nome = user.displayName || (user.email? user.email.split('@')[0] : 'Conta');
+  $('acctName').textContent = nome;
+  $('acctEmail').textContent = user.email || '';
+  $('acctAvatar').textContent = nome.trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+}
+function statusNuvem(txt,estado){
+  const l=$('led'); if(l) l.className='led'+(estado?' '+estado:'');
+  const t=$('n_status'); if(t) t.textContent=txt;
+}
+auth.onAuthStateChanged(async user=>{
+  if(user){
+    document.getElementById('authgate').style.display='none';
+    document.getElementById('appRoot').classList.remove('hide');
+    fillAccountInfo(user);
+    await bootApp(user);
+  } else {
+    if(fsUnsub){ fsUnsub(); fsUnsub=null; }
+    firebaseUser=null;
+    document.getElementById('appRoot').classList.add('hide');
+    document.getElementById('authgate').style.display='flex';
+    $('authEmail').value=''; $('authPass').value=''; clearAuthErr();
+    document.querySelectorAll('.sheet-bg.on').forEach(s=>s.classList.remove('on'));
+    document.body.style.overflow='';
+  }
+});
 
 /* ==================== ESTADO ==================== */
 let estudos=[],categorias=[],joias=[],projetos=[],assembleias=[],congressos=[],revisitas=[];
@@ -2575,74 +2722,8 @@ function abrirConfig(){ fecharMenu(); aplicarVisual(); abrir('sheetConfig'); }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') fecharMenu(); });
 
 /* ============================================================
-   NUVEM — Google Sheets pelo Apps Script
-   leitura por JSONP, escrita por formulário: não depende de CORS
+   SINCRONIZAÇÃO POR CONTA (Firestore)
    ============================================================ */
-const K_URL='at_nuvem_url', K_MARCAS='at_nuvem_marcas', K_FILA='at_nuvem_fila';
-const Nuvem={
-  get url(){ try{ return localStorage.getItem(K_URL)||''; }catch(e){ return ''; } },
-  set url(u){ try{ localStorage.setItem(K_URL,u||''); }catch(e){} },
-  marcas(){ try{ return JSON.parse(localStorage.getItem(K_MARCAS)||'{}'); }catch(e){ return {}; } },
-  marca(t,v){ const m=this.marcas(); m[t]=v; try{ localStorage.setItem(K_MARCAS,JSON.stringify(m)); }catch(e){} },
-  jsonp(params){
-    return new Promise((res,rej)=>{
-      const base=this.url; if(!base){ rej(new Error('Sem endereço da nuvem')); return; }
-      const cb='cb_'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
-      const sc=document.createElement('script');
-      const limpar=()=>{ try{ delete window[cb]; }catch(e){ window[cb]=undefined; } if(sc.parentNode) sc.parentNode.removeChild(sc); };
-      const t=setTimeout(()=>{ limpar(); rej(new Error('O Apps Script não respondeu a tempo')); },25000);
-      window[cb]=d=>{ clearTimeout(t); limpar(); if(d&&d.ok) res(d); else rej(new Error((d&&d.erro)||'Falha na nuvem')); };
-      sc.onerror=()=>{ clearTimeout(t); limpar(); rej(new Error('Não foi possível acessar a URL')); };
-      sc.src=base+'?'+new URLSearchParams(Object.assign({},params,{callback:cb})).toString();
-      document.body.appendChild(sc);
-    });
-  },
-  enviarForm(payload){
-    return new Promise(res=>{
-      const nome='ifr_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-      const ifr=document.createElement('iframe'); ifr.name=nome; ifr.style.display='none';
-      document.body.appendChild(ifr);
-      const fm=document.createElement('form');
-      fm.method='POST'; fm.action=this.url; fm.target=nome; fm.enctype='text/plain';
-      fm.acceptCharset='utf-8'; fm.style.display='none';
-      const i=document.createElement('input'); i.type='hidden'; i.name='dados'; i.value=JSON.stringify(payload);
-      fm.appendChild(i); document.body.appendChild(fm);
-      let pronto=false;
-      const fim=()=>{ if(pronto) return; pronto=true;
-        setTimeout(()=>{ if(fm.parentNode) fm.remove(); if(ifr.parentNode) ifr.remove(); },1500); res(true); };
-      ifr.onload=fim; setTimeout(fim,25000);
-      try{ fm.submit(); }catch(e){ fim(); }
-    });
-  },
-  async enviar(tabela,itens){
-    if(!itens||!itens.length) return;
-    const pacote={tabela,itens,desde:Date.now()};
-    try{ await fetch(this.url,{method:'POST',mode:'no-cors',
-      headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(pacote)}); }catch(e){}
-    await this.enviarForm(pacote);
-  },
-  fila(){ try{ return JSON.parse(localStorage.getItem(K_FILA)||'{}'); }catch(e){ return {}; } },
-  porFila(f){ try{ localStorage.setItem(K_FILA,JSON.stringify(f)); }catch(e){} },
-  async trocar(tabela,locais){
-    const m=this.marcas()[tabela]||{l:0,s:0};
-    const f=this.fila();
-    const pend=new Set(f[tabela]||[]);
-    // tudo que mudou depois do último envio entra na fila
-    (locais||[]).forEach(i=>{ if(i&&i.id&&(i.updatedAt||0)>(m.l||0)) pend.add(i.id); });
-    const novos=(locais||[]).filter(i=>i&&i.id&&pend.has(i.id));
-    // a fila só é limpa depois que o servidor confirma, na leitura seguinte
-    f[tabela]=[...pend]; this.porFila(f);
-    await this.enviar(tabela,novos);
-    const res=await this.jsonp({acao:'ler',tabela,desde:m.s||0});
-    const conf=await this.jsonp({acao:'confere',tabela,ids:[...pend].join(',')});
-    const ok=new Set((conf&&conf.ids)||[]);
-    const f2=this.fila();
-    f2[tabela]=[...pend].filter(id=>!ok.has(id));
-    this.porFila(f2);
-    this.marca(tabela,{l:Date.now(),s:res.hora});
-    return res;
-  }
-};
 function mesclar(local,recebidos){
   const m=new Map();
   [...(local||[]),...(recebidos||[])].forEach(o=>{ if(!o||!o.id) return;
@@ -2674,104 +2755,87 @@ function mesclarQuadro(local,remoto){
           updatedAt:Math.max(local.updatedAt||0,remoto.updatedAt||0),
           listas:ordem.map(id=>porId.get(id)).filter(l=>!l.del)};
 }
-const TABELAS=[
-  ['estudos',()=>estudos,v=>estudos=v],
-  ['categorias',()=>categorias,v=>categorias=v],
-  ['joias',()=>joias,v=>joias=v],
-  ['projetos',()=>projetos,v=>projetos=v],
-  ['assembleias',()=>assembleias,v=>assembleias=v],
-  ['congressos',()=>congressos,v=>congressos=v],
-  ['revisitas',()=>revisitas,v=>revisitas=v],
-  ['paginas',()=>paginas,v=>paginas=v],
-  ['discursos',()=>discursos,v=>discursos=v],
-  ['relatorio',()=>relatorio,v=>relatorio=v],
-  ['quadro',()=>[quadro],v=>{ const q=v.find(x=>x.id==='quadro'); if(q&&q.listas) quadro=mesclarQuadro(quadro,q); }]
-];
-function statusNuvem(txt,estado){
-  const t=$('n_status'); if(t) t.textContent=txt;
-  const l=$('led'); if(l) l.className='led'+(estado?' '+estado:'');
-  const i=$('n_info'); if(i&&estado==='err') i.textContent=txt;
+function docPayload(){
+  return {estudos,categorias,joias,projetos,assembleias,congressos,revisitas,paginas,discursos,relatorio,quadro};
 }
-let sincronizando=false, syncTimer=null;
-function agendarSync(){ if(!Nuvem.url) return; clearTimeout(syncTimer); syncTimer=setTimeout(()=>sincronizar(true),2000); }
-async function sincronizar(silencioso){
-  if(!Nuvem.url){ if(!silencioso) toast('Conecte a nuvem primeiro.'); return; }
-  if(sincronizando) return;
-  sincronizando=true; statusNuvem('Sincronizando…');
-  const falhas=[];
-  try{
-    for(const [nome,pegar,por] of TABELAS){
-      try{
-        const res=await Nuvem.trocar(nome,pegar());
-        if(res.itens&&res.itens.length){
-          const juntos=mesclar(pegar(),res.itens);
-          por(juntos);
-          if(nome==='quadro') await Store.set(K.quadro,quadro);
-          else await Store.set(K[nome],juntos);
-        }
-      }catch(e){ falhas.push(nome); }   // uma tabela com problema não derruba as outras
+function aplicarRemoto(remote){
+  if(!remote) return;
+  estudos=mesclar(estudos,remote.estudos);
+  categorias=mesclar(categorias,remote.categorias);
+  joias=mesclar(joias,remote.joias);
+  projetos=mesclar(projetos,remote.projetos);
+  assembleias=mesclar(assembleias,remote.assembleias);
+  congressos=mesclar(congressos,remote.congressos);
+  revisitas=mesclar(revisitas,remote.revisitas);
+  paginas=mesclar(paginas,remote.paginas);
+  discursos=mesclar(discursos,remote.discursos);
+  relatorio=mesclar(relatorio,remote.relatorio);
+  quadro=mesclarQuadro(quadro,remote.quadro);
+}
+async function salvarLocalTudo(){
+  await Promise.all([Store.set(K.estudos,estudos),Store.set(K.categorias,categorias),Store.set(K.joias,joias),
+    Store.set(K.projetos,projetos),Store.set(K.assembleias,assembleias),Store.set(K.congressos,congressos),
+    Store.set(K.revisitas,revisitas),Store.set(K.paginas,paginas),Store.set(K.discursos,discursos),
+    Store.set(K.relatorio,relatorio),Store.set(K.quadro,quadro)]);
+}
+let syncTimer=null, empurrando=false, empurrarDeNovo=false;
+function agendarSync(){
+  if(!firebaseUser) return;
+  clearTimeout(syncTimer);
+  syncTimer=setTimeout(async ()=>{
+    if(empurrando){ empurrarDeNovo=true; return; }
+    empurrando=true; statusNuvem('sincronizando…');
+    try{
+      await dbFS.collection('caderno_usuarios').doc(firebaseUser.uid).set(docPayload());
+      statusNuvem('sincronizado','on');
+    }catch(e){ statusNuvem('sem conexão','err'); }
+    empurrando=false;
+    if(empurrarDeNovo){ empurrarDeNovo=false; agendarSync(); }
+  },700);
+}
+function ligarOuvinte(uid){
+  if(fsUnsub){ fsUnsub(); fsUnsub=null; }
+  fsUnsub = dbFS.collection('caderno_usuarios').doc(uid).onSnapshot(snap=>{
+    if(!snap.exists || snap.metadata.hasPendingWrites) return;
+    const remote=snap.data(); if(!remote) return;
+    const antes=JSON.stringify(docPayload());
+    aplicarRemoto(remote);
+    if(JSON.stringify(docPayload())!==antes){
+      salvarLocalTudo(); renderTudo();
     }
-    if(falhas.length) throw new Error('não sincronizou: '+falhas.join(', '));
-    renderTudo();
-    statusNuvem('Sincronizado às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),'on');
-    renderPendencias();
-    if(!silencioso){ toast('Tudo sincronizado.'); const i=$('n_info'); if(i) i.textContent='Última sincronização agora.'; }
-  }catch(e){
-    renderTudo();
-    statusNuvem('Erro: '+e.message,'err');
-    renderPendencias();
-    if(!silencioso) toast('Não deu para sincronizar.');
-  }finally{ sincronizando=false; }
+    statusNuvem('sincronizado','on');
+  }, ()=>{ statusNuvem('sem conexão','err'); });
 }
-function renderPendencias(){
-  const el=$('n_pend'); if(!el) return;
-  const f=Nuvem.fila(), linhas=[];
-  const ROT={estudos:'Estudo pessoal',categorias:'Categorias',joias:'Jóias',projetos:'Planner',
-    assembleias:'Assembleias',congressos:'Congressos',revisitas:'Revisitas',paginas:'Caderno livre',
-    discursos:'Discursos',relatorio:'Relatório de campo',quadro:'Organização'};
-  let total=0;
-  Object.keys(ROT).forEach(t=>{
-    const n=(f[t]||[]).length; if(!n) return; total+=n;
-    linhas.push(`<div><span>${ROT[t]}</span><b class="esperando">${n} esperando</b></div>`);
-  });
-  if(!Nuvem.url){ el.innerHTML=''; return; }
-  el.innerHTML = total
-    ? linhas.join('')+`<div><span>Ao todo</span><b class="esperando">${total} registro(s)</b></div>`
-    : `<div><span>Tudo o que você escreveu já subiu</span><b class="ok">em dia</b></div>`;
-}
-function abrirNuvem(){
-  renderPendencias();
-  $('n_url').value=Nuvem.url;
-  $('n_info').textContent=Nuvem.url?'Conectado a esta URL.':'Ainda não conectado.';
-  abrir('sheetNuvem');
-}
-async function conectarNuvem(){
-  const u=val('n_url');
-  if(!/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(u)){ $('n_info').textContent='A URL precisa terminar em /exec.'; return; }
-  Nuvem.url=u; $('n_info').textContent='Conectando…';
-  try{ await Nuvem.jsonp({acao:'ping'}); $('n_info').textContent='Conectado. Sincronizando…';
-    await sincronizar(true); $('n_info').textContent='Pronto. O caderno já está na nuvem.'; toast('Nuvem conectada.');
-  }catch(e){ $('n_info').textContent='Não respondeu: '+e.message; }
-}
-function desconectarNuvem(){
-  Nuvem.url=''; try{ localStorage.removeItem(K_MARCAS); }catch(e){}
-  statusNuvem('Sem nuvem'); $('n_info').textContent='Desconectado. Os dados continuam neste aparelho.';
-  toast('Nuvem desconectada.');
-}
-async function testarNuvem(){
-  if(!Nuvem.url){ $('n_info').textContent='Cole a URL primeiro.'; return; }
-  const id='teste_'+Date.now().toString(36);
-  $('n_info').textContent='Enviando um item de teste…';
+async function bootApp(user){
+  firebaseUser=user;
+  montarNav();
+  aplicarVisual();
+  await carregar();
+  let remote=null;
   try{
-    await Nuvem.enviar('joias',[{id,tema:'Teste',del:true,updatedAt:Date.now()}]);
-    await new Promise(r=>setTimeout(r,3000));
-    const res=await Nuvem.jsonp({acao:'ler',tabela:'joias',desde:0});
-    const achou=(res.itens||[]).some(i=>i.id===id);
-    $('n_info').textContent=achou
-      ? 'Gravação funcionando. A planilha respondeu com '+(res.itens||[]).length+' registro(s).'
-      : 'A leitura funciona, mas a gravação não chegou. Republique o Apps Script como Nova versão.';
-  }catch(e){ $('n_info').textContent='Erro: '+e.message; }
+    const snap=await dbFS.collection('caderno_usuarios').doc(user.uid).get();
+    if(snap.exists) remote=snap.data();
+  }catch(e){}
+  if(remote){ aplicarRemoto(remote); await salvarLocalTudo(); renderTudo(); }
+  agendarSync();
+  let inicial='inicio';
+  try{ const s=localStorage.getItem('at_aba'); if(s&&ABAS.some(([id])=>id===s)) inicial=s; }catch(e){}
+  const par=new URLSearchParams(location.search);
+  const ir=par.get('ir');
+  if(ir&&ABAS.some(([id])=>id===ir)) inicial=ir;
+  go(inicial);
+  if(ir==='joias'&&par.get('novo')) abrirJoia();
+  if(ir==='relatorio'&&par.get('hoje')) abrirDia(hoje());
+  if(ir||par.get('novo')) history.replaceState(null,'',location.pathname);
+  statusNuvem('sincronizado','on');
+  ligarOuvinte(user.uid);
+  avisarRevisitas();
+  if('serviceWorker' in navigator && location.protocol==='https:'){
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  }
 }
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden && firebaseUser) agendarSync(); });
+window.addEventListener('online',()=>{ if(firebaseUser) agendarSync(); });
 
 /* ============================================================
    CÓPIA DE SEGURANÇA
@@ -3232,23 +3296,6 @@ function graficoAno(){
 function irParaMes(chave){ mesAtual=chave; renderRelatorio(); }
 
 /* ============================================================
-   NUVEM — o que ainda não subiu
-   ============================================================ */
-const ROTULO_TABELA={estudos:'Estudos',categorias:'Categorias',joias:'Jóias',projetos:'Projetos',
-  assembleias:'Assembleias',congressos:'Congressos',revisitas:'Revisitas',paginas:'Páginas',
-  discursos:'Discursos',relatorio:'Relatório de campo',quadro:'Organização'};
-function renderPendencias(){
-  const el=$('n_pend'); if(!el) return;
-  if(!Nuvem.url){ el.innerHTML=''; return; }
-  const fila=Nuvem.fila();
-  const linhas=Object.keys(ROTULO_TABELA).map(t=>[ROTULO_TABELA[t],(fila[t]||[]).length]);
-  const faltando=linhas.reduce((a,[,n])=>a+n,0);
-  el.innerHTML=linhas.filter(([,n])=>n>0).map(([rot,n])=>
-      `<div><span>${rot}</span><b class="esperando">${n} esperando</b></div>`).join('')+
-    (faltando?'':`<div><span>Tudo enviado</span><b class="ok">em dia</b></div>`);
-}
-
-/* ============================================================
    AVISO DAS REVISITAS
    ============================================================ */
 function avisarRevisitas(){
@@ -3268,34 +3315,6 @@ function pedirAvisos(){
     ? 'Pronto: o caderno vai avisar quando uma revisita vencer.'
     : 'Sem problema — o aviso continua aparecendo dentro do app.'));
 }
-
-/* ============================================================
-   INÍCIO
-   ============================================================ */
-(async()=>{
-  montarNav();
-  aplicarVisual();
-  await carregar();
-  let inicial='inicio';
-  try{ const s=localStorage.getItem('at_aba'); if(s&&ABAS.some(([id])=>id===s)) inicial=s; }catch(e){}
-  /* atalhos do ícone do app: index.html?ir=joias&novo=1 */
-  const par=new URLSearchParams(location.search);
-  const ir=par.get('ir');
-  if(ir&&ABAS.some(([id])=>id===ir)) inicial=ir;
-  go(inicial);
-  if(ir==='joias'&&par.get('novo')) abrirJoia();
-  if(ir==='relatorio'&&par.get('hoje')) abrirDia(hoje());
-  if(ir||par.get('novo')) history.replaceState(null,'',location.pathname);
-  if(Nuvem.url){ statusNuvem('Conectado'); sincronizar(true); } else statusNuvem('Sem nuvem');
-  renderPendencias();
-  avisarRevisitas();
-  setInterval(()=>{ if(!document.querySelector('.sheet-bg.on')) sincronizar(true); },90000);
-  window.addEventListener('online',()=>sincronizar(true));
-  document.addEventListener('visibilitychange',()=>{ if(!document.hidden) sincronizar(true); });
-  if('serviceWorker' in navigator && location.protocol==='https:'){
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
-  }
-})();
 </script>
 <script>
 (function(){
@@ -3417,6 +3436,5 @@ function pedirAvisos(){
   setInterval(contar,1500);
 })();
 </script><script src="app.js"></script>
-</body>
 </body>
 </html>
