@@ -3423,7 +3423,6 @@ function textoDoMes(){
   const nome=($('m_nome')?$('m_nome').value.trim():'');
   const obs=($('m_obs')?$('m_obs').value.trim():'');
   const metaCod=config().meta||'';
-  const meta=(METAS.find(x=>x[0]===metaCod)||['','',0]);
   const credOn=metaTemCredito(metaCod);
   const partesCred=catsCreditoAtivas().map(id=>[id,creditoTotalDoMes(id,mesAtual)]).filter(([,v])=>v>0);
   const linhas=[`*Relatório de campo — ${rotulo}*`];
@@ -3432,7 +3431,6 @@ function textoDoMes(){
   linhas.push('Participei no ministério: '+(total>0?'sim':'não'));
   if(total>0) linhas.push('Horas: '+fmtCurto(total)+(credOn&&partesCred.length?` (+${partesCred.map(([id,v])=>fmtCurto(v)+' '+nomeCategoriaCredito(id)).join(', ')})`:''));
   if(qtd) linhas.push('Estudos bíblicos: '+qtd);
-  if(meta[2]) linhas.push('Meta: '+meta[1]+(total>=meta[2]*60?' — alcançada':` — faltam ${fmtCurto(meta[2]*60-total)}`));
   if(obs){ linhas.push(''); linhas.push('Observação: '+obs); }
   return linhas.join('\n');
 }

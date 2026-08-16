@@ -1,7 +1,7 @@
 /* Caderno — Meu Estudo Pessoal
-   v4: crédito por categoria, página Estudo e navegação de voltar corrigida */
-const CACHE = 'caderno-v4';
-const ARQUIVOS = ['./', './index.html', './manifest.json', './icone-192.png', './icone-512.png'];
+   v5: relatório com créditos somados na meta; gesto de voltar nunca fecha o app */
+const CACHE = 'caderno-v5';
+const ARQUIVOS = ['./', './index.html', './manifest.json', './app.js', './icone-192.png', './icone-512.png'];
 
 self.addEventListener('install', ev => {
   ev.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQUIVOS)).then(() => self.skipWaiting()));
