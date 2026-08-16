@@ -1,6 +1,6 @@
 /* Caderno — Meu Estudo Pessoal
-   v3: o index vai primeiro à rede, para o app instalado receber as atualizações */
-const CACHE = 'caderno-v3';
+   v4: crédito por categoria, página Estudo e navegação de voltar corrigida */
+const CACHE = 'caderno-v4';
 const ARQUIVOS = ['./', './index.html', './manifest.json', './icone-192.png', './icone-512.png'];
 
 self.addEventListener('install', ev => {
