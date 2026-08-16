@@ -911,6 +911,7 @@ body{font-size:calc(16px * var(--esc))}
               <span class="kicker">Total do mês</span>
               <div class="total" id="rc_total">0 h</div>
               <div class="falta" id="rc_falta">Escolha uma meta para acompanhar quanto falta.</div>
+              <div class="credito-inline" id="rc_totalComCredito" style="display:none;margin-top:4px"></div>
             </div>
           </div>
           <div class="bar" style="margin-top:12px"><i id="rc_bar" style="width:0%"></i></div>
@@ -919,6 +920,7 @@ body{font-size:calc(16px * var(--esc))}
             <div class="bar" style="margin-top:8px"><i id="rc_anoBar" style="width:0%"></i></div>
             <p class="obs" id="rc_anoFalta"></p>
             <p class="ritmo" id="rc_anoRitmo"></p>
+            <p class="credito-inline" id="rc_anoComCredito" style="display:none;margin:4px 0 0"></p>
           </div>
           <div class="metabox">
             <div style="flex:1;min-width:200px"><label class="lbl">Meta do mês</label>
@@ -2634,17 +2636,26 @@ function renderRelatorio(){
   const credOn=metaTemCredito(metaCod);
   const catsAtivas=catsCreditoAtivas();
   const partesCred=catsAtivas.map(id=>[id,creditoTotalDoMes(id,mesAtual)]).filter(([,v])=>v>0);
+  const credTotalMes=credOn?partesCred.reduce((t,[,v])=>t+v,0):0;
+  const totalComCredito=total+credTotalMes;
   $('rc_total').innerHTML=fmt(total)+(credOn&&partesCred.length
     ?` <span class="credito-inline">(+${partesCred.map(([id,v])=>fmtCurto(v)+' '+esc(nomeCategoriaCredito(id))).join(', ')})</span>`:'');
+  const totalCredEl=$('rc_totalComCredito');
+  if(totalCredEl){
+    if(credOn&&credTotalMes>0){
+      totalCredEl.style.display='';
+      totalCredEl.textContent=`Total com créditos: ${fmt(totalComCredito)}`;
+    } else totalCredEl.style.display='none';
+  }
   const caixaCred=$('rc_creditos');
   if(caixaCred) caixaCred.classList.toggle('on',credOn);
   if(credOn){ renderChipsCredito(); renderListaCredito(); }
   const meta=(METAS.find(m=>m[0]===metaCod)||['','',0])[2];
   const alvo=meta*60;
-  const pct=alvo?Math.min(100,Math.round(total*100/alvo)):0;
+  const pct=alvo?Math.min(100,Math.round(totalComCredito*100/alvo)):0;
   $('rc_bar').style.width=pct+'%';
   const anel=$('rc_anel');
-  if(anel){ const volta=213.6, parte=alvo?Math.min(1,total/alvo):0;
+  if(anel){ const volta=213.6, parte=alvo?Math.min(1,totalComCredito/alvo):0;
     anel.setAttribute('stroke-dasharray',(volta*parte).toFixed(1)+' '+volta); }
   const est=$('rc_estudos'); if(est) est.value=estudosDoMes(mesAtual)||'';
   const qtd=estudosDoMes(mesAtual);
@@ -2652,10 +2663,10 @@ function renderRelatorio(){
   const diasComServico=relatorio.filter(r=>!r.del&&r.id.startsWith('d_')&&(r.data||'').slice(0,7)===mesAtual&&Number(r.minutos)>0).length;
   if(!alvo){
     $('rc_falta').innerHTML=`Escolha uma meta abaixo para acompanhar quanto falta.`;
-  } else if(total>=alvo){
-    $('rc_falta').innerHTML=`Meta de ${meta} h alcançada. <b>${fmt(total-alvo)} acima</b> do necessário.`;
+  } else if(totalComCredito>=alvo){
+    $('rc_falta').innerHTML=`Meta de ${meta} h alcançada. <b>${fmt(totalComCredito-alvo)} acima</b> do necessário.`;
   } else {
-    $('rc_falta').innerHTML=`Faltam <b>${fmt(alvo-total)}</b> para a meta de ${meta} h — ${pct}% concluído.`;
+    $('rc_falta').innerHTML=`Faltam <b>${fmt(alvo-totalComCredito)}</b> para a meta de ${meta} h — ${pct}% concluído.`;
   }
   const partes=[];
   partes.push(diasComServico?`${diasComServico} dia(s) com serviço neste mês`:'Nenhum dia lançado neste mês ainda');
@@ -2675,6 +2686,16 @@ function minutosDoAno(mes){
   return relatorio.filter(r=>!r.del&&r.id.startsWith('d_')&&r.data>=de&&r.data<=ate)
                   .reduce((t,r)=>t+(Number(r.minutos)||0),0);
 }
+function mesesDoAno(mesRef){
+  const {inicio}=anoDeServico(mesRef);
+  const arr=[]; let a=inicio, m=9;
+  for(let i=0;i<12;i++){ arr.push(`${a}-${String(m).padStart(2,'0')}`); m++; if(m>12){m=1;a++;} }
+  return arr;
+}
+function creditoMinutosDoAno(mesRef){
+  const cats=catsCreditoAtivas();
+  return mesesDoAno(mesRef).reduce((t,mes)=>t+cats.reduce((s,id)=>s+creditoTotalDoMes(id,mes),0),0);
+}
 function mesesRestantes(mes){
   const [a,m]=mes.split('-').map(Number);
   const {fim}=anoDeServico(mes);
@@ -2686,15 +2707,24 @@ function renderAno(metaCod){
   caixa.classList.add('on');
   const {rotulo}=anoDeServico(mesAtual);
   const alvo=600*60, total=minutosDoAno(mesAtual);
-  const pct=Math.min(100,Math.round(total*100/alvo));
+  const credTotalAno=creditoMinutosDoAno(mesAtual);
+  const totalComCredito=total+credTotalAno;
+  const pct=Math.min(100,Math.round(totalComCredito*100/alvo));
   $('rc_anoRotulo').textContent=rotulo+' · meta de 600 h';
   $('rc_anoTotal').textContent=fmt(total);
   $('rc_anoBar').style.width=pct+'%';
-  if(total>=alvo){
-    $('rc_anoFalta').innerHTML=`Meta anual alcançada. <b>${fmt(total-alvo)} acima</b> das 600 h.`;
+  const anoCredEl=$('rc_anoComCredito');
+  if(anoCredEl){
+    if(credTotalAno>0){
+      anoCredEl.style.display='';
+      anoCredEl.textContent=`Total com créditos: ${fmt(totalComCredito)}`;
+    } else anoCredEl.style.display='none';
+  }
+  if(totalComCredito>=alvo){
+    $('rc_anoFalta').innerHTML=`Meta anual alcançada. <b>${fmt(totalComCredito-alvo)} acima</b> das 600 h.`;
     $('rc_anoRitmo').textContent='';
   } else {
-    const falta=alvo-total, restam=mesesRestantes(mesAtual);
+    const falta=alvo-totalComCredito, restam=mesesRestantes(mesAtual);
     $('rc_anoFalta').innerHTML=`Faltam <b>${fmt(falta)}</b> para as 600 h — ${pct}% do ano concluído.`;
     $('rc_anoRitmo').textContent = restam>0
       ? `Contando este mês, restam ${restam} ${restam===1?'mês':'meses'}: cerca de ${fmt(Math.ceil(falta/restam))} por mês.`

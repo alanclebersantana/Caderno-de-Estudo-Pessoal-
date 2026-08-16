@@ -3,14 +3,12 @@
    Regras:
    1) Sidebar aberta + gesto de voltar  -> só fecha a sidebar.
    2) Fora da tela Início + gesto de voltar -> volta para a Início.
-   3) Já na tela Início + gesto de voltar -> só fecha o app se for
-      feito duas vezes seguidas (dentro de DOUBLE_BACK_DELAY).
+   3) Já na tela Início + gesto de voltar -> é ignorado. Em nenhuma
+      circunstância o gesto de voltar fecha o app.
    ============================================================ */
 
 (function () {
   const HOME = 'inicio';
-  const DOUBLE_BACK_DELAY = 2000; // ms para o 2º gesto fechar o app
-  let lastBackPressTime = 0;
 
   function drawerAberta() {
     const drawer = document.getElementById('drawer');
@@ -32,9 +30,13 @@
   }
 
   window.addEventListener('DOMContentLoaded', () => {
-    if (!history.state) {
-      try { history.replaceState({ page: HOME }, ''); } catch (e) {}
-    }
+    // Fixa o estado atual como Início e empilha um estado extra por cima.
+    // Isso garante que sempre exista pelo menos uma entrada de histórico
+    // "de reserva" para o gesto de voltar consumir — mesmo no primeiríssimo
+    // toque em voltar, ainda na tela Início, sem isso o app fecharia direto
+    // por não ter nenhum estado anterior para o navegador/sistema "pegar".
+    try { history.replaceState({ page: HOME }, ''); } catch (e) {}
+    empilharEstado({ page: HOME });
   });
 
   window.addEventListener('popstate', () => {
@@ -54,15 +56,11 @@
       return;
     }
 
-    // REGRA 3: já na Início -> exige 2 gestos seguidos para fechar
-    const agora = Date.now();
-    if (agora - lastBackPressTime < DOUBLE_BACK_DELAY) {
-      // segundo gesto a tempo: deixa o navegador/sistema seguir (fecha o app)
-      history.back();
-    } else {
-      lastBackPressTime = agora;
-      empilharEstado({ page: HOME });
-    }
+    // REGRA 3: já na Início -> o gesto de voltar é ignorado.
+    // Reempilha o estado para que o próximo gesto de voltar seja
+    // sempre capturado de novo, nunca deixando o navegador/sistema
+    // seguir em frente e fechar o app.
+    empilharEstado({ page: HOME });
   });
 
   // Sempre que a sidebar for aberta, empilha um estado, para o gesto de
