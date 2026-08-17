@@ -625,6 +625,62 @@ body{font-size:calc(16px * var(--esc))}
 .leitura .bloco span{display:block;font-size:calc(15px * var(--esc));color:var(--ink-soft);
   line-height:1.7;white-space:pre-line;margin-top:2px}
 
+/* ================= REUNIÕES — CATEGORIAS ================= */
+.voltar-cat{display:block;max-width:980px;margin:0 auto;padding:14px 18px 0;font-size:13px;font-weight:700;color:var(--rose-deep)}
+.cat-list{display:flex;flex-direction:column;gap:14px}
+.cat{background:var(--paper);border:1px solid var(--rule);border-radius:var(--r);padding:18px;
+  box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;text-align:left;width:100%}
+.cat .corpo{flex:1;min-width:0}
+.cat h3{margin:0;font-family:var(--script);font-size:24px;color:var(--ink);font-weight:700}
+.cat p{margin:4px 0 0;font-size:13px;color:var(--muted);line-height:1.4}
+.cat .seta{color:var(--muted);font-size:20px;flex:0 0 auto}
+
+/* ---- personagens da demonstração ---- */
+.pessoas{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:12px}
+.pessoa{display:flex;align-items:center;gap:8px;background:var(--gelo);border:1.5px solid var(--rule);
+  border-radius:999px;padding:6px 12px 6px 6px}
+.pessoa.eu{border-color:var(--rose);background:var(--blush)}
+.pessoa .av{width:30px;height:30px;border-radius:50%;background:var(--paper);border:1px solid var(--rule);
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex:0 0 30px}
+.pessoa b{font-size:13.5px;font-weight:700;outline:none}
+.pessoa .estrela{font-size:14px;color:var(--muted)}
+.pessoa.eu .estrela{color:var(--gold)}
+.pessoa .rm{color:var(--muted);font-size:15px;font-weight:700;padding:0 2px}
+.novapessoa{background:var(--gelo);border:1px dashed var(--blush-3);border-radius:14px;padding:14px;margin-bottom:14px}
+.emoji-pick{display:flex;gap:8px;margin:8px 0 12px;flex-wrap:wrap}
+.emoji-pick button{width:48px;height:48px;border-radius:14px;border:2px solid var(--line);background:var(--paper);font-size:22px}
+.emoji-pick button.on{border-color:var(--rose);background:var(--blush)}
+
+/* ---- falas do diálogo ---- */
+.fala{display:flex;gap:10px;align-items:flex-start;background:var(--gelo);border:1px solid var(--line);
+  border-radius:14px;padding:12px;margin-bottom:9px;flex-wrap:wrap}
+.fala select{flex:0 0 150px;border:1px solid var(--line);border-radius:10px;padding:9px 8px;background:var(--paper);font-size:13px;font-weight:700}
+.fala textarea{flex:1;min-width:160px;border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:14.5px;
+  min-height:44px;resize:vertical;background:var(--paper)}
+.fala .rm{color:var(--muted);font-size:17px;font-weight:700;padding:6px 2px;flex:0 0 auto}
+.vazio{color:var(--muted);font-size:13.5px;text-align:center;padding:20px 10px}
+
+/* ---- prévia do roteiro ---- */
+.roteiro{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;box-shadow:var(--shadow)}
+.roteiro .linha{margin-bottom:12px}
+.roteiro .quem{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--teal-deep);
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.roteiro .quem .av{font-size:15px}
+.roteiro .txt{font-size:15px;line-height:1.5;margin:0 0 0 2px}
+.roteiro .linha.eu .quem{color:var(--rose-ink)}
+.roteiro .linha.eu .txt{font-weight:700;color:var(--ink)}
+
+/* ---- modo leitura: falas de diálogo ---- */
+.leitura .linha{margin-bottom:16px}
+.leitura .quem{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--teal-deep);
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.leitura .quem .av{font-size:18px}
+.leitura .linha .txt{font-size:17px;line-height:1.6;margin:0}
+.leitura .linha.eu .quem{color:var(--rose-ink)}
+.leitura .linha.eu .txt{font-weight:700}
+
+@media(min-width:900px){ .voltar-cat{padding-top:26px} }
+
 /* ================= GRÁFICO DO ANO ================= */
 .graf{display:flex;align-items:flex-end;gap:5px;height:130px;margin-top:18px;
   background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:12px 10px 8px}
@@ -736,7 +792,7 @@ body{font-size:calc(16px * var(--esc))}
 
   <button class="g2" data-a="discursos" onclick="go('discursos')">
     <svg viewBox="0 0 24 24"><path d="M12 3v10"/><path d="M9 6a3 3 0 0 1 6 0v4a3 3 0 0 1-6 0z"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M9 21h6"/></svg>
-    Discurso Público
+    Reuniões
   </button>
 
   <button class="g2" data-a="assembleias" onclick="go('assembleias')">
@@ -885,13 +941,46 @@ body{font-size:calc(16px * var(--esc))}
       <div class="wrap"><div id="listPaginas" class="list"></div></div>
     </section>
 
-    <!-- ============ DISCURSO PÚBLICO ============ -->
+    <!-- ============ REUNIÕES ============ -->
     <section id="v_discursos" style="display:none">
-      <div class="section-head">
-        <div><h2>Discurso Público</h2><p>Data, orador, congregação, tema e suas anotações.</p></div>
-        <button class="round" onclick="abrirDiscurso()">+</button>
+
+      <!-- hub: escolha da categoria -->
+      <div id="reun_hub">
+        <div class="section-head"><div><h2>Reuniões</h2><p>Escolha o que você quer preparar.</p></div></div>
+        <div class="wrap">
+          <div class="cat-list">
+            <button class="cat" onclick="reunIr('discursos')">
+              <span class="corpo"><h3>Discurso Público</h3><p>Data, orador, congregação, tema e suas anotações.</p></span>
+              <span class="seta">›</span>
+            </button>
+            <button class="cat teal" onclick="reunIr('ministerio')">
+              <span class="corpo"><h3>Faça Seu Melhor No Ministério</h3><p>Monte o diálogo da sua demonstração, com os personagens que você quiser.</p></span>
+              <span class="seta">›</span>
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="wrap"><div id="listDiscursos" class="list"></div></div>
+
+      <!-- categoria: Discurso Público (igual já era) -->
+      <div id="reun_discursos" style="display:none">
+        <button class="voltar-cat" onclick="reunIr('hub')">‹ Reuniões</button>
+        <div class="section-head">
+          <div><h2>Discurso Público</h2><p>Data, orador, congregação, tema e suas anotações.</p></div>
+          <button class="round" onclick="abrirDiscurso()">+</button>
+        </div>
+        <div class="wrap"><div id="listDiscursos" class="list"></div></div>
+      </div>
+
+      <!-- categoria: Faça Seu Melhor No Ministério (nova) -->
+      <div id="reun_ministerio" style="display:none">
+        <button class="voltar-cat" onclick="reunIr('hub')">‹ Reuniões</button>
+        <div class="section-head">
+          <div><h2>Faça Seu Melhor No Ministério</h2><p>Suas demonstrações, com diálogo e personagens.</p></div>
+          <button class="round" onclick="abrirParteNova()">+</button>
+        </div>
+        <div class="wrap"><div id="listPartes" class="list"></div></div>
+      </div>
+
     </section>
 
     <!-- ============ RELATÓRIO DE CAMPO ============ -->
@@ -1297,6 +1386,7 @@ body{font-size:calc(16px * var(--esc))}
   </div>
   <div class="sheet-foot">
     <button class="btn btn-danger btn-sm left" id="pg_del" style="display:none" onclick="excluirPagina()">Excluir</button>
+    <button class="btn btn-soft btn-sm" onclick="lerPagina()">Modo leitura</button>
     <button class="btn btn-quiet" onclick="fecharPagina()">Fechar</button>
     <button class="btn btn-rose" onclick="salvarPagina(true)">Concluir e salvar</button>
   </div>
@@ -1323,6 +1413,68 @@ body{font-size:calc(16px * var(--esc))}
     <button class="btn btn-soft btn-sm" onclick="lerDiscurso()">Modo leitura</button>
     <button class="btn btn-quiet" onclick="fecharDiscurso()">Fechar</button>
     <button class="btn btn-rose" onclick="salvarDiscurso(true)">Concluir e salvar</button>
+  </div>
+</div></div>
+
+<!-- ============ FOLHA: MINISTÉRIO — TEMA E PARTE ============ -->
+<div class="sheet-bg" id="sheetParteTema"><div class="sheet small">
+  <div class="sheet-head"><div><span class="kicker">Faça seu melhor no ministério</span><h3 id="hParteTema">Nova demonstração</h3></div>
+    <button class="x" onclick="fechar('sheetParteTema')">×</button></div>
+  <div class="sheet-body">
+    <div class="field"><label class="lbl">Tema da demonstração</label>
+      <input class="inp" id="pt_tema" placeholder="Ex.: Como iniciar uma conversa no trabalho"></div>
+    <div class="field" style="margin-bottom:0"><label class="lbl">Qual é a sua parte?</label>
+      <div class="opcoes" id="pt_opcoes"></div></div>
+  </div>
+  <div class="sheet-foot">
+    <button class="btn btn-quiet" onclick="fechar('sheetParteTema')">Fechar</button>
+    <button class="btn btn-rose" onclick="continuarParaDialogo()">Continuar</button>
+  </div>
+</div></div>
+
+<!-- ============ FOLHA: MINISTÉRIO — DIÁLOGO ============ -->
+<div class="sheet-bg" id="sheetParteDialogo"><div class="sheet">
+  <div class="sheet-head">
+    <div><span class="kicker" id="dlg_parte_badge">Parte</span><h3 id="dlg_tema_titulo">Tema</h3></div>
+    <button class="x" onclick="fecharParteDialogo()">×</button></div>
+  <div class="spiral"></div>
+  <div class="sheet-body">
+    <button class="btn btn-quiet btn-sm" style="margin-bottom:18px" onclick="editarTemaParte()">Editar tema e parte</button>
+
+    <div class="sec" style="margin-top:0;padding-top:0;border-top:none">
+      <div class="sec-top"><div><h4>Personagens</h4>
+        <p class="hint">Renomeie e escolha o boneco de cada um. A estrela marca quem é você — suas falas ficam em negrito.</p></div></div>
+      <div class="pessoas" id="dlg_pessoas"></div>
+      <div class="novapessoa" id="dlg_form_pessoa" style="display:none">
+        <div class="field" style="margin-bottom:0"><label class="lbl">Nome do personagem</label>
+          <input class="inp" id="dlg_nome_pessoa" placeholder="Ex.: Dona Marta"></div>
+        <label class="lbl" style="margin-top:12px;display:block">Escolha o boneco</label>
+        <div class="emoji-pick" id="dlg_emoji_pick"></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-rose btn-sm" onclick="addPessoaDlg()">Adicionar</button>
+          <button class="btn btn-quiet btn-sm" onclick="cancelarPessoaDlg()">Cancelar</button>
+        </div>
+      </div>
+      <button class="btn btn-line btn-sm" id="dlg_btn_add_pessoa" onclick="abrirFormPessoaDlg()">+ Personagem</button>
+    </div>
+
+    <div class="sec">
+      <div class="sec-top"><div><h4>Diálogo</h4><p class="hint">Adicione as falas na ordem da conversa.</p></div></div>
+      <div id="dlg_falas"></div>
+      <button class="btn btn-line btn-sm" onclick="addFalaDlg()">+ Fala</button>
+    </div>
+
+    <div class="sec">
+      <div class="sec-top"><div><h4>Como vai ficar</h4><p class="hint">Prévia do roteiro.</p></div></div>
+      <div class="roteiro" id="dlg_preview"></div>
+    </div>
+  </div>
+  <div class="sheet-foot">
+    <button class="btn btn-danger btn-sm left" id="pd_del" style="display:none" onclick="excluirParte()">Excluir</button>
+    <button class="btn btn-soft btn-sm" onclick="baixarParte()">⬇ Baixar</button>
+    <button class="btn btn-soft btn-sm" onclick="abrirLeituraParte()">Modo leitura</button>
+    <button class="btn btn-quiet" onclick="fecharParteDialogo()">Fechar</button>
+    <button class="btn btn-rose" onclick="salvarParte(true)">Concluir e salvar</button>
   </div>
 </div></div>
 
@@ -1534,7 +1686,8 @@ const Store={
 const K={estudos:'at_estudos_v1',categorias:'at_categorias_v1',joias:'at_joias_v1',
          paginas:'at_paginas_v1',discursos:'at_discursos_v1',relatorio:'at_relatorio_v1',
          quadro:'at_quadro_v1',projetos:'at_projetos_v1',assembleias:'at_assembleias_v1',
-         congressos:'at_congressos_v1',revisitas:'at_revisitas_v1',estudantes:'at_estudantes_v1'};
+         congressos:'at_congressos_v1',revisitas:'at_revisitas_v1',estudantes:'at_estudantes_v1',
+         partes:'at_partes_v1'};
 
 /* ==================== LOGIN E CONTA (Firebase) ==================== */
 const firebaseConfig = {
@@ -1636,9 +1789,18 @@ auth.onAuthStateChanged(async user=>{
 
 /* ==================== ESTADO ==================== */
 let estudos=[],categorias=[],joias=[],projetos=[],assembleias=[],congressos=[],revisitas=[],estudantes=[];
-let paginas=[],discursos=[],relatorio=[];
+let paginas=[],discursos=[],relatorio=[],partes=[];
 let mesAtual=new Date().toISOString().slice(0,7), diaAberto=null;
 let edPagina=null,edDiscurso=null,edEstudante=null,obsEstudanteTmp=[];
+/* ---- Faça Seu Melhor No Ministério: estado de edição do diálogo ---- */
+let edParte=null, dlgTema='', dlgParteSel=null, dlgPessoas=[], dlgFalas=[], dlgProxId=1, dlgEmojiEscolhido='';
+const PARTES_MINISTERIO=[
+  {k:'primeira', nome:'Primeira Conversa'},
+  {k:'cultivando', nome:'Cultivando o Interesse'},
+  {k:'discipulos', nome:'Fazendo Discípulos'},
+  {k:'crencas', nome:'Explicando Suas Crenças'}
+];
+const AVATARES_PARTE=['💁🏼‍♂️','💁🏽‍♂️','💁🏻‍♂️','💁🏻‍♀️','💁🏼‍♀️','💁🏽‍♀️'];
 const METAS=[['','Sem meta',0],['campanha','Pioneiro Auxiliar Campanha — 15 h',15],
              ['auxiliar','Pioneiro Auxiliar — 30 h',30],['regular','Pioneiro Regular — 50 h',50],
              ['especial','Pioneiro Especial — 100 h',100]];
@@ -1648,7 +1810,7 @@ let edEstudo=null,edJoia=null,edProjeto=null,edEvento=null,edEventoTipo='assembl
 
 const ABAS=[['inicio','Início'],['busca','Buscar'],
             ['estudo','Estudo Pessoal'],['livre','Caderno Livre'],['joias','Jóias Espirituais'],
-            ['discursos','Discurso Público'],['org','Organização'],['planner','Planner'],
+            ['discursos','Reuniões'],['org','Organização'],['planner','Planner'],
             ['assembleias','Assembleias'],['congressos','Congressos'],
             ['relatorio','Relatório de Campo'],['estudantes','Estudo'],['revisitas','Revisitas'],
             ['etiquetas','Etiquetas'],['lixeira','Lixeira']];
@@ -1681,9 +1843,19 @@ function go(a){
   const t=$('tb_aba'); if(t) t.textContent=nome;
   fecharMenu();
   if(a==='busca'){ const c=$('bq'); if(c) setTimeout(()=>c.focus(),250); }
+  if(a==='discursos') reunIr('hub');
   window.scrollTo({top:0,behavior:'smooth'});
   try{ localStorage.setItem('at_aba',a); }catch(e){}
 }
+/* ---- Reuniões: alterna entre o hub e as duas categorias ---- */
+function reunIr(tela){
+  ['hub','discursos','ministerio'].forEach(t=>{ const el=$('reun_'+t); if(el) el.style.display=(t===tela)?'':'none'; });
+  if(tela==='discursos') renderDiscursos();
+  if(tela==='ministerio') renderPartesLista();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function irDiscursoInicio(){ go('discursos'); reunIr('discursos'); }
+function irMinisterioInicio(){ go('discursos'); reunIr('ministerio'); }
 /* ==================== CARGA ==================== */
 async function carregar(){
   estudos=await Store.lista(K.estudos);
@@ -1697,6 +1869,7 @@ async function carregar(){
   paginas=await Store.lista(K.paginas);
   discursos=await Store.lista(K.discursos);
   relatorio=await Store.lista(K.relatorio);
+  partes=await Store.lista(K.partes);
   await purgarLixeira();
   const q=await Store.objeto(K.quadro);
   quadro=q&&q.listas?q:{id:'quadro',updatedAt:Date.now(),listas:[
@@ -1705,7 +1878,7 @@ async function carregar(){
 }
 function renderTudo(){ renderCategorias(); renderEstudos(); renderJoias(); renderBoard(); renderProjetos();
   renderEventos('assembleia'); renderEventos('congresso'); renderEstudantes(); renderRevisitas();
-  renderPaginas(); renderDiscursos(); renderRelatorio(); renderExtras(); }
+  renderPaginas(); renderDiscursos(); renderPartesLista(); renderRelatorio(); renderExtras(); }
 function renderExtras(){
   try{ renderMenuContagens(); renderInicio(); renderEtiquetas(); renderLixeira(); renderBusca(); }catch(e){}
 }
@@ -2561,6 +2734,196 @@ async function excluirDiscurso(){
 }
 
 /* ============================================================
+   FAÇA SEU MELHOR NO MINISTÉRIO
+   ============================================================ */
+function renderPartesLista(){
+  const el=$('listPartes'); if(!el) return;
+  const ps=partes.filter(x=>!x.del);
+  if(!ps.length){ el.innerHTML=`<div class="empty"><h3>Nenhuma demonstração ainda</h3>
+    <p>Monte o diálogo da sua parte com os personagens que você quiser.</p>
+    <button class="btn btn-rose" onclick="abrirParteNova()">+ Nova demonstração</button></div>`; return; }
+  el.innerHTML=ps.sort((a,b)=>(b.data||'').localeCompare(a.data||'')).map(p=>{
+    const info=PARTES_MINISTERIO.find(x=>x.k===p.parte);
+    return `<article class="card teal" onclick="abrirParteExistente('${p.id}')">
+      <div class="meta"><span class="chip-date t">${dataBR(p.data)||'Sem data'}</span>
+        ${info?`<span class="tag">${esc(info.nome)}</span>`:''}</div>
+      <h3>${esc(p.tema)||'Sem tema'}</h3>
+      <p class="excerpt">${(p.falas||[]).length} fala(s) · ${(p.personagens||[]).length} personagem(ns)</p></article>`;
+  }).join('');
+}
+function abrirParteNova(){
+  edParte=null; dlgTema=''; dlgParteSel=null;
+  dlgPessoas=[{id:1,nome:'Eu',emoji:AVATARES_PARTE[0],eu:true}]; dlgFalas=[]; dlgProxId=2;
+  $('hParteTema').textContent='Nova demonstração';
+  $('pt_tema').value='';
+  renderOpcoesParteTema();
+  abrir('sheetParteTema');
+  setTimeout(()=>$('pt_tema').focus(),200);
+}
+function abrirParteExistente(id){
+  const p=partes.find(x=>x.id===id); if(!p) return;
+  edParte=p.id; dlgTema=p.tema||''; dlgParteSel=p.parte||null;
+  dlgPessoas=(p.personagens||[]).map(x=>({...x}));
+  dlgFalas=(p.falas||[]).map(x=>({...x}));
+  dlgProxId=1+Math.max(0,...dlgPessoas.map(x=>x.id||0),...dlgFalas.map(x=>x.id||0));
+  abrirTelaDialogo();
+}
+function editarTemaParte(){
+  $('hParteTema').textContent='Editar tema e parte';
+  $('pt_tema').value=dlgTema;
+  renderOpcoesParteTema();
+  abrir('sheetParteTema');
+}
+function renderOpcoesParteTema(){
+  const box=$('pt_opcoes'); if(!box) return;
+  box.innerHTML=PARTES_MINISTERIO.map(p=>`<button type="button" class="opcao ${dlgParteSel===p.k?'on':''}" onclick="selecionarParteTema('${p.k}')"><b>${esc(p.nome)}</b></button>`).join('');
+}
+function selecionarParteTema(k){ dlgParteSel=k; renderOpcoesParteTema(); }
+function continuarParaDialogo(){
+  dlgTema=val('pt_tema');
+  if(!dlgTema){ toast('Escreva o tema da demonstração.'); return; }
+  if(!dlgParteSel){ toast('Escolha qual é a sua parte.'); return; }
+  fechar('sheetParteTema');
+  abrirTelaDialogo();
+}
+function abrirTelaDialogo(){
+  const p=PARTES_MINISTERIO.find(x=>x.k===dlgParteSel);
+  $('dlg_parte_badge').textContent=p?p.nome:'Parte';
+  $('dlg_tema_titulo').textContent=dlgTema||'Sem tema';
+  $('pd_del').style.display=edParte?'':'none';
+  cancelarPessoaDlg();
+  renderPessoasDlg(); renderFalasDlg(); renderPreviewDlg();
+  abrir('sheetParteDialogo');
+}
+/* ---- personagens ---- */
+function renderPessoasDlg(){
+  const box=$('dlg_pessoas'); if(!box) return; box.innerHTML='';
+  dlgPessoas.forEach(p=>{
+    const el=document.createElement('div');
+    el.className='pessoa'+(p.eu?' eu':'');
+    el.innerHTML=`<span class="av">${p.emoji}</span>
+      <b contenteditable="true" spellcheck="false" onblur="renomearPessoaDlg(${p.id},this.textContent)">${esc(p.nome)}</b>
+      <button class="estrela" type="button" title="Marcar como você" onclick="marcarEuDlg(${p.id})">★</button>
+      <button class="rm" type="button" title="Remover" onclick="removerPessoaDlg(${p.id})">×</button>`;
+    box.appendChild(el);
+  });
+}
+function renomearPessoaDlg(id,novoNome){
+  const p=dlgPessoas.find(x=>x.id===id); if(!p) return;
+  const n=(novoNome||'').trim(); p.nome=n||p.nome;
+  renderPessoasDlg(); renderFalasDlg(); renderPreviewDlg();
+}
+function marcarEuDlg(id){ dlgPessoas.forEach(p=>p.eu=(p.id===id)); renderPessoasDlg(); renderPreviewDlg(); }
+function removerPessoaDlg(id){
+  if(dlgFalas.some(f=>f.pessoaId===id)){ toast('Essa pessoa tem falas no diálogo. Remova as falas antes.'); return; }
+  dlgPessoas=dlgPessoas.filter(x=>x.id!==id); renderPessoasDlg(); renderFalasDlg();
+}
+function abrirFormPessoaDlg(){
+  $('dlg_form_pessoa').style.display='block'; $('dlg_btn_add_pessoa').style.display='none';
+  $('dlg_nome_pessoa').value=''; dlgEmojiEscolhido=AVATARES_PARTE[0];
+  renderEmojiPickDlg(); setTimeout(()=>$('dlg_nome_pessoa').focus(),150);
+}
+function cancelarPessoaDlg(){
+  const f=$('dlg_form_pessoa'); if(f) f.style.display='none';
+  const b=$('dlg_btn_add_pessoa'); if(b) b.style.display='inline-flex';
+}
+function renderEmojiPickDlg(){
+  const box=$('dlg_emoji_pick'); if(!box) return; box.innerHTML='';
+  AVATARES_PARTE.forEach(em=>{
+    const b=document.createElement('button'); b.type='button';
+    b.className=em===dlgEmojiEscolhido?'on':''; b.textContent=em;
+    b.onclick=()=>{ dlgEmojiEscolhido=em; renderEmojiPickDlg(); };
+    box.appendChild(b);
+  });
+}
+function addPessoaDlg(){
+  const nome=val('dlg_nome_pessoa'); if(!nome){ toast('Dê um nome ao personagem.'); return; }
+  dlgPessoas.push({id:dlgProxId++,nome,emoji:dlgEmojiEscolhido||AVATARES_PARTE[0],eu:false});
+  cancelarPessoaDlg(); renderPessoasDlg();
+}
+/* ---- falas ---- */
+function renderFalasDlg(){
+  const box=$('dlg_falas'); if(!box) return;
+  if(!dlgFalas.length){ box.innerHTML='<p class="vazio">Nenhuma fala ainda. Toque em "+ Fala".</p>'; return; }
+  box.innerHTML='';
+  dlgFalas.forEach(f=>{
+    const el=document.createElement('div'); el.className='fala';
+    const opts=dlgPessoas.map(p=>`<option value="${p.id}" ${p.id===f.pessoaId?'selected':''}>${p.emoji} ${esc(p.nome)}</option>`).join('');
+    el.innerHTML=`<select onchange="mudarFalanteDlg(${f.id},this.value)">${opts}</select>
+      <textarea placeholder="O que essa pessoa fala…" oninput="mudarTextoDlg(${f.id},this.value)">${esc(f.texto)}</textarea>
+      <button class="rm" type="button" onclick="removerFalaDlg(${f.id})">×</button>`;
+    box.appendChild(el);
+  });
+}
+function addFalaDlg(){
+  if(!dlgPessoas.length){ toast('Adicione ao menos um personagem primeiro.'); return; }
+  let pessoaId=dlgPessoas[0].id;
+  if(dlgFalas.length){
+    const ultimoId=dlgFalas[dlgFalas.length-1].pessoaId;
+    const i=dlgPessoas.findIndex(p=>p.id===ultimoId);
+    pessoaId=dlgPessoas[(i+1)%dlgPessoas.length].id;
+  }
+  dlgFalas.push({id:dlgProxId++,pessoaId,texto:''});
+  renderFalasDlg(); renderPreviewDlg();
+}
+function mudarFalanteDlg(id,pid){ const f=dlgFalas.find(x=>x.id===id); if(f){ f.pessoaId=Number(pid); renderPreviewDlg(); } }
+function mudarTextoDlg(id,txt){ const f=dlgFalas.find(x=>x.id===id); if(f){ f.texto=txt; renderPreviewDlg(); } }
+function removerFalaDlg(id){ dlgFalas=dlgFalas.filter(x=>x.id!==id); renderFalasDlg(); renderPreviewDlg(); }
+/* ---- prévia ---- */
+function renderPreviewDlg(){
+  const box=$('dlg_preview'); if(!box) return;
+  if(!dlgFalas.length){ box.innerHTML='<p class="vazio">O roteiro aparece aqui conforme você adiciona falas.</p>'; return; }
+  box.innerHTML=dlgFalas.map(f=>{
+    const p=dlgPessoas.find(x=>x.id===f.pessoaId); if(!p) return '';
+    return `<div class="linha${p.eu?' eu':''}"><div class="quem"><span class="av">${p.emoji}</span> ${esc(p.nome)}${p.eu?' (você)':''}</div>
+      <p class="txt">${esc(f.texto)||'…'}</p></div>`;
+  }).join('');
+}
+/* ---- salvar / excluir ---- */
+async function salvarParte(fechando){
+  if(!dlgTema){ if(fechando) toast('Escreva o tema primeiro.'); return false; }
+  const obj={id:edParte||uid(),tema:dlgTema,parte:dlgParteSel,personagens:dlgPessoas,falas:dlgFalas,
+             data:hoje(),updatedAt:Date.now()};
+  edParte=obj.id;
+  partes=partes.filter(x=>x.id!==obj.id).concat(obj);
+  await guardar('partes',partes); renderPartesLista();
+  if(fechando){ fechar('sheetParteDialogo'); toast('Demonstração salva.'); }
+  return true;
+}
+async function fecharParteDialogo(){ const ok=await salvarParte(false); fechar('sheetParteDialogo'); if(ok) toast('Salvo automaticamente.'); }
+async function excluirParte(){
+  if(!edParte||!confirm('Excluir esta demonstração?')) return;
+  partes=partes.filter(x=>x.id!==edParte).concat(paraLixeira(partes.find(_x=>_x.id===edParte)||{id:edParte}));
+  await Store.set(K.partes,partes); agendarSync(); renderExtras();
+  fechar('sheetParteDialogo'); renderPartesLista(); toast('Demonstração excluída.');
+}
+/* ---- baixar para enviar ---- */
+function baixarParte(){
+  const p=PARTES_MINISTERIO.find(x=>x.k===dlgParteSel);
+  let txt=`${p?p.nome:'Parte ministerial'}\nTema: ${dlgTema}\n\n`;
+  dlgFalas.forEach(f=>{
+    const pe=dlgPessoas.find(x=>x.id===f.pessoaId); if(!pe) return;
+    txt+=`${pe.nome}${pe.eu?' (eu)':''}: ${f.texto}\n\n`;
+  });
+  const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  const slug=(dlgTema||'demonstracao').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').slice(0,40);
+  a.download=`dialogo-${slug||'demonstracao'}.txt`; a.click();
+}
+/* ---- modo leitura ---- */
+function abrirLeituraParte(){
+  const p=PARTES_MINISTERIO.find(x=>x.k===dlgParteSel);
+  let h=`<p class="quando">Faça seu melhor no ministério</p><h1>${esc(dlgTema)||'Sem tema'}</h1>
+    <p class="autor">${p?esc(p.nome):''}</p>`;
+  dlgFalas.forEach(f=>{
+    const pe=dlgPessoas.find(x=>x.id===f.pessoaId); if(!pe) return;
+    h+=`<div class="linha${pe.eu?' eu':''}"><div class="quem"><span class="av">${pe.emoji}</span> ${esc(pe.nome)}${pe.eu?' (você)':''}</div>
+      <p class="txt">${esc(f.texto)}</p></div>`;
+  });
+  abrirLeitura('Faça seu melhor no ministério','Modo leitura',h);
+}
+
+/* ============================================================
    RELATÓRIO DE SERVIÇO DE CAMPO
    ============================================================ */
 const idDia=iso=>'d_'+iso;
@@ -2933,7 +3296,7 @@ function mesclarQuadro(local,remoto){
           listas:ordem.map(id=>porId.get(id)).filter(l=>!l.del)};
 }
 function docPayload(){
-  return {estudos,categorias,joias,projetos,assembleias,congressos,revisitas,estudantes,paginas,discursos,relatorio,quadro};
+  return {estudos,categorias,joias,projetos,assembleias,congressos,revisitas,estudantes,paginas,discursos,relatorio,quadro,partes};
 }
 function aplicarRemoto(remote){
   if(!remote) return;
@@ -2949,12 +3312,13 @@ function aplicarRemoto(remote){
   discursos=mesclar(discursos,remote.discursos);
   relatorio=mesclar(relatorio,remote.relatorio);
   quadro=mesclarQuadro(quadro,remote.quadro);
+  partes=mesclar(partes,remote.partes);
 }
 async function salvarLocalTudo(){
   await Promise.all([Store.set(K.estudos,estudos),Store.set(K.categorias,categorias),Store.set(K.joias,joias),
     Store.set(K.projetos,projetos),Store.set(K.assembleias,assembleias),Store.set(K.congressos,congressos),
     Store.set(K.revisitas,revisitas),Store.set(K.estudantes,estudantes),Store.set(K.paginas,paginas),Store.set(K.discursos,discursos),
-    Store.set(K.relatorio,relatorio),Store.set(K.quadro,quadro)]);
+    Store.set(K.relatorio,relatorio),Store.set(K.quadro,quadro),Store.set(K.partes,partes)]);
 }
 let syncTimer=null, empurrando=false, empurrarDeNovo=false;
 function agendarSync(){
@@ -3019,7 +3383,7 @@ window.addEventListener('online',()=>{ if(firebaseUser) agendarSync(); });
    CÓPIA DE SEGURANÇA
    ============================================================ */
 function exportar(){
-  const dados={tipo:'caderno_estudo_pessoal',versao:2,estudos,categorias,joias,quadro,projetos,assembleias,congressos,revisitas,estudantes,paginas,discursos,relatorio};
+  const dados={tipo:'caderno_estudo_pessoal',versao:2,estudos,categorias,joias,quadro,projetos,assembleias,congressos,revisitas,estudantes,paginas,discursos,relatorio,partes};
   const blob=new Blob([JSON.stringify(dados,null,2)],{type:'application/json'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
   a.download=`caderno-estudo-pessoal-${hoje()}.json`; a.click();
@@ -3038,11 +3402,12 @@ $('fileImp').addEventListener('change',async ev=>{
     congressos=juntar(congressos,d.congressos); revisitas=juntar(revisitas,d.revisitas);
     estudantes=juntar(estudantes,d.estudantes);
     paginas=juntar(paginas,d.paginas); discursos=juntar(discursos,d.discursos); relatorio=juntar(relatorio,d.relatorio);
+    partes=juntar(partes,d.partes);
     if(d.quadro&&d.quadro.listas) quadro=d.quadro;
     await Promise.all([guardar('estudos',estudos),guardar('categorias',categorias),guardar('joias',joias),
       guardar('projetos',projetos),guardar('assembleias',assembleias),guardar('congressos',congressos),
       guardar('revisitas',revisitas),guardar('estudantes',estudantes),guardar('paginas',paginas),guardar('discursos',discursos),
-      guardar('relatorio',relatorio),Store.set(K.quadro,quadro)]);
+      guardar('relatorio',relatorio),guardar('partes',partes),Store.set(K.quadro,quadro)]);
     renderTudo(); toast('Cópia restaurada.');
   }catch(e){ toast('Não deu para ler o arquivo.'); }
   ev.target.value='';
@@ -3170,6 +3535,12 @@ function itensBusca(){
     data:p.data,corpo:juntar(p.texto,(p.etiquetas||[]).join(' ')),acao:`abrirPagina('${p.id}')`}));
   discursos.filter(x=>!x.del).forEach(d=>out.push({tipo:'discurso',rot:'Discurso público',titulo:d.tema||'Sem tema',
     data:d.data,corpo:juntar(d.orador,d.cong,d.texto,(d.etiquetas||[]).join(' ')),acao:`abrirDiscurso('${d.id}')`}));
+  partes.filter(x=>!x.del).forEach(p=>{
+    const info=PARTES_MINISTERIO.find(x=>x.k===p.parte);
+    out.push({tipo:'parte',rot:'Faça seu melhor no ministério',titulo:p.tema||'Sem tema',
+      data:p.data,corpo:juntar(info?info.nome:'',(p.personagens||[]).map(x=>x.nome).join(' '),(p.falas||[]).map(x=>x.texto).join(' ')),
+      acao:`abrirParteExistente('${p.id}')`});
+  });
   revisitas.filter(x=>!x.del).forEach(r=>out.push({tipo:'revisita',rot:'Revisita',titulo:r.nome||'Sem nome',
     data:r.contato,corpo:juntar(r.endereco,r.texto,(r.etiquetas||[]).join(' ')),acao:`abrirRevisita('${r.id}')`}));
   estudantes.filter(x=>!x.del).forEach(e=>out.push({tipo:'estudante',rot:'Estudo',titulo:e.nome||'Sem nome',
@@ -3205,7 +3576,7 @@ function renderBusca(){
     if(chips) chips.innerHTML='';
     el.innerHTML=`<div class="empty"><h3>Procure em todo o caderno</h3>
       <p>Escreva ao menos duas letras. A busca olha estudos, jóias, páginas, discursos,
-      assembleias, congressos, estudos bíblicos, revisitas, projetos, cartões e as notas do relatório.</p></div>`; return; }
+      demonstrações do ministério, assembleias, congressos, estudos bíblicos, revisitas, projetos, cartões e as notas do relatório.</p></div>`; return; }
   const alvo=semAcento(termo);
   const achados=itensBusca().filter(i=>semAcento(i.titulo+' '+i.corpo).includes(alvo));
   const porTipo=new Map();
@@ -3252,7 +3623,8 @@ function renderInicio(){
     ['Estudo Pessoal',estudos.filter(x=>!x.del).length,ultima(estudos),"go('estudo')",0],
     ['Jóias Espirituais',joias.filter(x=>!x.del).length,livrosUsados?livrosUsados+' livro(s) da Bíblia':'nada ainda',"go('joias')",0],
     ['Caderno Livre',paginas.filter(x=>!x.del).length,ultima(paginas),"go('livre')",0],
-    ['Discurso Público',discursos.filter(x=>!x.del).length,ultima(discursos),"go('discursos')",0],
+    ['Discurso Público',discursos.filter(x=>!x.del).length,ultima(discursos),"irDiscursoInicio()",0],
+    ['Faça Seu Melhor No Ministério',partes.filter(x=>!x.del).length,ultima(partes),"irMinisterioInicio()",0],
     ['Relatório de Campo',fmtCurto(totalMes),meta?`meta de ${meta} h · ${pctMeta}%`:'sem meta escolhida',"go('relatorio')",0],
     ['Estudo',estudantes.filter(x=>!x.del).length,ultima(estudantes),"go('estudantes')",0],
     ['Revisitas',revisitas.filter(x=>!x.del).length,vencidas?vencidas+' esperando retorno':'tudo em dia',"go('revisitas')",vencidas],
@@ -3275,7 +3647,7 @@ function renderMenuContagens(){
     estudo:estudos.filter(x=>!x.del).length,
     livre:paginas.filter(x=>!x.del).length,
     joias:joias.filter(x=>!x.del).length,
-    discursos:discursos.filter(x=>!x.del).length,
+    discursos:discursos.filter(x=>!x.del).length+partes.filter(x=>!x.del).length,
     assembleias:assembleias.filter(x=>!x.del).length,
     congressos:congressos.filter(x=>!x.del).length,
     org:(quadro.listas||[]).reduce((t,l)=>t+(l.cards||[]).length,0),
@@ -3307,6 +3679,7 @@ const TIPOS_LIXO=[
   ['joias','Jóia espiritual',()=>joias,v=>joias=v,o=>o.tema],
   ['paginas','Página',()=>paginas,v=>paginas=v,o=>o.titulo],
   ['discursos','Discurso público',()=>discursos,v=>discursos=v,o=>o.tema],
+  ['partes','Faça seu melhor no ministério',()=>partes,v=>partes=v,o=>o.tema],
   ['revisitas','Revisita',()=>revisitas,v=>revisitas=v,o=>o.nome],
   ['estudantes','Estudo',()=>estudantes,v=>estudantes=v,o=>o.nome],
   ['projetos','Projeto',()=>projetos,v=>projetos=v,o=>o.nome],
@@ -3395,6 +3768,12 @@ function lerEstudo(id){
   if((e.perguntas||[]).length){ h+='<h4>Perguntas de reflexão</h4>';
     e.perguntas.forEach(p=>h+=`<div class="bloco"><b>${esc(p.pergunta)}</b><span>${esc(p.resposta)||'—'}</span></div>`); }
   abrirLeitura('Estudo pessoal','Modo leitura',h);
+}
+function lerPagina(id){
+  const p=paginas.find(x=>x.id===(id||edPagina)&&!x.del); if(!p){ toast('Salve a página primeiro.'); return; }
+  let h=`<p class="quando">${dataBR(p.data)||'Sem data'}</p><h1>${esc(p.titulo)||'Página sem título'}</h1>`;
+  if(p.texto) h+=`<p class="corpo">${esc(p.texto)}</p>`;
+  abrirLeitura('Caderno livre','Modo leitura',h);
 }
 function lerDiscurso(id){
   const d=discursos.find(x=>x.id===(id||edDiscurso)&&!x.del); if(!d){ toast('Salve o discurso primeiro.'); return; }
