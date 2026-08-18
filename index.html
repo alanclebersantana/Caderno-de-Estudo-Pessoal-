@@ -717,6 +717,8 @@ body{font-size:calc(16px * var(--esc))}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -1471,7 +1473,7 @@ body{font-size:calc(16px * var(--esc))}
   </div>
   <div class="sheet-foot">
     <button class="btn btn-danger btn-sm left" id="pd_del" style="display:none" onclick="excluirParte()">Excluir</button>
-    <button class="btn btn-soft btn-sm" onclick="baixarParte()">⬇ Baixar</button>
+    <button class="btn btn-soft btn-sm" onclick="baixarParte()">⬇ Baixar imagem</button>
     <button class="btn btn-soft btn-sm" onclick="abrirLeituraParte()">Modo leitura</button>
     <button class="btn btn-quiet" onclick="fecharParteDialogo()">Fechar</button>
     <button class="btn btn-rose" onclick="salvarParte(true)">Concluir e salvar</button>
@@ -2897,21 +2899,8 @@ async function excluirParte(){
   await Store.set(K.partes,partes); agendarSync(); renderExtras();
   fechar('sheetParteDialogo'); renderPartesLista(); toast('Demonstração excluída.');
 }
-/* ---- baixar para enviar ---- */
-function baixarParte(){
-  const p=PARTES_MINISTERIO.find(x=>x.k===dlgParteSel);
-  let txt=`${p?p.nome:'Parte ministerial'}\nTema: ${dlgTema}\n\n`;
-  dlgFalas.forEach(f=>{
-    const pe=dlgPessoas.find(x=>x.id===f.pessoaId); if(!pe) return;
-    txt+=`${pe.nome}${pe.eu?' (eu)':''}: ${f.texto}\n\n`;
-  });
-  const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
-  const slug=(dlgTema||'demonstracao').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').slice(0,40);
-  a.download=`dialogo-${slug||'demonstracao'}.txt`; a.click();
-}
-/* ---- modo leitura ---- */
-function abrirLeituraParte(){
+/* ---- html do modo leitura (compartilhado entre a tela e o download) ---- */
+function montarLeituraParteHTML(){
   const p=PARTES_MINISTERIO.find(x=>x.k===dlgParteSel);
   let h=`<p class="quando">Faça seu melhor no ministério</p><h1>${esc(dlgTema)||'Sem tema'}</h1>
     <p class="autor">${p?esc(p.nome):''}</p>`;
@@ -2920,7 +2909,61 @@ function abrirLeituraParte(){
     h+=`<div class="linha${pe.eu?' eu':''}"><div class="quem"><span class="av">${pe.emoji}</span> ${esc(pe.nome)}${pe.eu?' (você)':''}</div>
       <p class="txt">${esc(f.texto)}</p></div>`;
   });
-  abrirLeitura('Faça seu melhor no ministério','Modo leitura',h);
+  return h;
+}
+/* ---- modo leitura ---- */
+function abrirLeituraParte(){
+  abrirLeitura('Faça seu melhor no ministério','Modo leitura',montarLeituraParteHTML());
+}
+/* ---- baixar: gera o mesmo visual do modo leitura como imagem (e PDF, se possível) ---- */
+function slugArquivo(txt){
+  return (txt||'demonstracao').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'').slice(0,40) || 'demonstracao';
+}
+async function baixarParte(){
+  if(!dlgFalas.length){ toast('Adicione as falas antes de baixar.'); return; }
+  const nome=`dialogo-${slugArquivo(dlgTema)}`;
+  await baixarLeituraComoImagemEPdf(montarLeituraParteHTML(),nome);
+}
+/* ---- utilitário: renderiza um html no estilo "modo leitura" fora da tela,
+   captura como imagem PNG e, se a biblioteca de PDF carregou, gera também um PDF ---- */
+async function baixarLeituraComoImagemEPdf(htmlConteudo,nomeArquivo){
+  if(typeof html2canvas==='undefined'){ toast('Sem conexão para gerar a imagem agora. Tente novamente online.'); return; }
+  toast('Preparando o download…');
+  const wrap=document.createElement('div');
+  wrap.style.cssText='position:fixed;left:-9999px;top:0;width:720px;background:var(--paper);'+
+    'padding:34px 34px 44px;box-sizing:border-box;z-index:-1';
+  wrap.innerHTML=`<div class="leitura">${htmlConteudo}</div>`;
+  document.body.appendChild(wrap);
+  try{
+    if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
+    const corFundo=getComputedStyle(document.documentElement).getPropertyValue('--paper').trim()||'#ffffff';
+    const canvas=await html2canvas(wrap,{scale:2,backgroundColor:corFundo,useCORS:true});
+    await new Promise(res=>{
+      canvas.toBlob(blob=>{
+        if(blob){
+          const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+          a.download=`${nomeArquivo}.png`; a.click();
+          setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+        }
+        res();
+      },'image/png');
+    });
+    try{
+      if(window.jspdf&&window.jspdf.jsPDF){
+        const { jsPDF }=window.jspdf;
+        const larguraPx=canvas.width/2, alturaPx=canvas.height/2; // desfaz o scale:2
+        const pdf=new jsPDF({orientation:alturaPx>=larguraPx?'p':'l',unit:'px',format:[larguraPx,alturaPx]});
+        pdf.addImage(canvas.toDataURL('image/jpeg',0.93),'JPEG',0,0,larguraPx,alturaPx);
+        pdf.save(`${nomeArquivo}.pdf`);
+      }
+    }catch(e){ /* PDF é um extra; a imagem já foi baixada */ }
+    toast('Download pronto.');
+  }catch(e){
+    toast('Não foi possível gerar a imagem agora.');
+  }finally{
+    wrap.remove();
+  }
 }
 
 /* ============================================================

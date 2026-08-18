@@ -1,6 +1,6 @@
 /* Caderno — Meu Estudo Pessoal
-   v5: relatório com créditos somados na meta; gesto de voltar nunca fecha o app */
-const CACHE = 'caderno-v5';
+   v6: baixar demonstração do ministério como imagem/PDF (modo leitura) */
+const CACHE = 'caderno-v6';
 const ARQUIVOS = ['./', './index.html', './manifest.json', './app.js', './icone-192.png', './icone-512.png'];
 
 self.addEventListener('install', ev => {
@@ -19,8 +19,9 @@ self.addEventListener('message', ev => { if (ev.data === 'atualizar') self.skipW
 self.addEventListener('fetch', ev => {
   const url = new URL(ev.request.url);
   if (ev.request.method !== 'GET') return;
-  // a nuvem e as fontes sempre vão à rede
-  if (url.hostname.indexOf('google') >= 0 || url.hostname.indexOf('gstatic') >= 0) return;
+  // a nuvem, as fontes e as bibliotecas de imagem/pdf sempre vão à rede
+  if (url.hostname.indexOf('google') >= 0 || url.hostname.indexOf('gstatic') >= 0 ||
+      url.hostname.indexOf('cdnjs.cloudflare.com') >= 0) return;
 
   const ehPagina = ev.request.mode === 'navigate' ||
                    /\/(index\.html|manifest\.json)$/.test(url.pathname) ||
